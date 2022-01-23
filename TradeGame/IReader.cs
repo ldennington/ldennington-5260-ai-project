@@ -2,6 +2,8 @@
 {
     internal interface IReader
     {
-        public IList<Resource> ReadCsv(string path);
+        public IDictionary<string, Resource> ReadResources(string path);
+
+        public IList<Country> ReadCountries(string path);
     }
 }
