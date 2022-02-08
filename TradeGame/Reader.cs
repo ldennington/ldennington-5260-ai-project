@@ -1,5 +1,4 @@
 ﻿using CsvHelper;
-using CsvHelper.Configuration;
 using System.Globalization;
 using System.IO.Abstractions;
 
@@ -21,12 +20,17 @@ namespace TradeGame
             using var reader = new StreamReader(fileSystem.File.OpenRead(path));
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
-            // CSV Reader syntax for enumerating rows
-            var record = new Resource();
-            var records = csv.EnumerateRecords(record);
-            foreach (var r in records)
+            csv.Read();
+            csv.ReadHeader();
+            while (csv.Read())
             {
-                resources.Add(r.Name, r);
+                var record = new Resource
+                {
+                    Name = csv.GetField("Resource"),
+                    Weight = double.Parse(csv.GetField("Weight")),
+                    Notes = csv.GetField("Notes")
+                };
+                resources.Add(record.Name, record);
             }
 
             return resources;
