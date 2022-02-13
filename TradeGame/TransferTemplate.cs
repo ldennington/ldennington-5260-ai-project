@@ -1,4 +1,4 @@
-﻿namespace TradeGame
+namespace TradeGame
 {
     internal class TransferTemplate
     {
