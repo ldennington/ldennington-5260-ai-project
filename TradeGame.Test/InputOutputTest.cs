@@ -30,8 +30,7 @@ namespace TradeGame.Test
             fileSystemMock.AddFile(resourceFilePath, TestData.RESOURCE_INPUT);
 
             IReader reader = new Reader(fileSystemMock);
-            IDictionary<string, Resource> actualk = reader.ReadResources(resourceFilePath);//.Should().BeEquivalentTo(expectedResources);
-            string blah;
+            reader.ReadResources(resourceFilePath).Should().BeEquivalentTo(expectedResources);
         }
 
         [TestMethod]
@@ -95,6 +94,35 @@ namespace TradeGame.Test
 
             IReader reader = new Reader(fileSystemMock);
             reader.ReadCountries(countryFilePath).Should().BeEquivalentTo(expectedCountriesAndResources);
+        }
+
+        [TestMethod]
+        public void ReadTransformTemplateInput()
+        {
+            string templateFilePath = Path.Combine("transform_templates.csv");
+            fileSystemMock.AddFile(templateFilePath, TestData.TRANSFORM_TEMPLATE_INPUT);
+            IList<TransformTemplate> expectedTemplates = new List<TransformTemplate>()
+            {
+                new TransformTemplate()
+                {
+                    Name = "housing",
+                    Inputs = new Dictionary<string, int>()
+                    {
+                        { "population", 5 },
+                        { "metallicElements", 1 },
+                        { "timber", 5 },
+                        { "metallicAlloys", 3 },
+                    },
+                    Outputs = new Dictionary<string, int>()
+                    {
+                        { "housing", 1 },
+                        { "housingWaste", 1 },
+                        { "population", 5 },
+                    },
+                }
+            };
+            IReader reader = new Reader(fileSystemMock);
+            reader.ReadTransformTemplates(templateFilePath).Should().BeEquivalentTo(expectedTemplates);
         }
     }
 }

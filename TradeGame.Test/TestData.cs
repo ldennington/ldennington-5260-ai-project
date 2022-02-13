@@ -1,4 +1,6 @@
-﻿namespace TradeGame.Test
+﻿using System.Collections.Generic;
+
+namespace TradeGame.Test
 {
     internal static class TestData
     {
@@ -19,5 +21,21 @@
                                         "Carpania,25,100,300,0,0,0\n",
                                         "Dinotopia,30,200,200,0,0,0\n",
                                         "Erewhon,70,500,1700,0,0,0");
+
+
+        public static string TRANSFORM_TEMPLATE_INPUT = @"[{
+	        ""name"": ""housing"",
+	        ""inputs"": {
+		        ""population"": ""5"",
+		        ""metallicElements"": ""1"",
+		        ""timber"": ""5"",
+		        ""metallicAlloys"": ""3""
+	        },
+	        ""outputs"": {
+		        ""housing"": ""1"",
+		        ""housingWaste"": ""1"",
+		        ""population"": ""5""
+	        }
+        }]";
     }
 }

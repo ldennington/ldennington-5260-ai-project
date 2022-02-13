@@ -1,4 +1,5 @@
 ﻿using CsvHelper;
+using Newtonsoft.Json;
 using System.Globalization;
 using System.IO.Abstractions;
 
@@ -64,6 +65,12 @@ namespace TradeGame
             }
 
             return countries;
+        }
+
+        public IList<TransformTemplate> ReadTransformTemplates(string path)
+        {
+            using var reader = new StreamReader(fileSystem.File.OpenRead(path));
+            return JsonConvert.DeserializeObject<IList<TransformTemplate>>(reader.ReadToEnd());
         }
     }
 }
