@@ -30,7 +30,8 @@ namespace TradeGame.Test
             fileSystemMock.AddFile(resourceFilePath, TestData.RESOURCE_INPUT);
 
             IReader reader = new Reader(fileSystemMock);
-            reader.ReadResources(resourceFilePath).Should().BeEquivalentTo(expectedResources);
+            reader.ReadResources(resourceFilePath);
+            Global.Resources.Should().BeEquivalentTo(expectedResources);
         }
 
         [TestMethod]
@@ -101,7 +102,7 @@ namespace TradeGame.Test
         {
             string templateFilePath = Path.Combine("transform_templates.csv");
             fileSystemMock.AddFile(templateFilePath, TestData.TRANSFORM_TEMPLATE_INPUT);
-            IList<TransformTemplate> expectedTemplates = new List<TransformTemplate>()
+            IList<TransformTemplate> expected = new List<TransformTemplate>()
             {
                 new TransformTemplate()
                 {
@@ -117,12 +118,12 @@ namespace TradeGame.Test
                     {
                         { "housing", 1 },
                         { "housingWaste", 1 },
-                        { "population", 5 },
+                        { "population", 5 }
                     },
                 }
             };
             IReader reader = new Reader(fileSystemMock);
-            reader.ReadTransformTemplates(templateFilePath).Should().BeEquivalentTo(expectedTemplates);
+            reader.ReadTransformTemplates(templateFilePath).Should().BeEquivalentTo(expected);
         }
     }
 }
