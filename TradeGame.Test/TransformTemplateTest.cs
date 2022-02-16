@@ -25,7 +25,7 @@ namespace TradeGame.Test
                         { "housing", 1 },
                         { "housingWaste", 1 },
                         { "population", 5 },
-                    }
+                    },
             };
             TransformTemplate deepCopy = template.DeepCopy();
             deepCopy.Should().BeEquivalentTo(template);

@@ -1,14 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace TradeGame
 {
+    // ensures we can deserialize numbers as numbers instead of strings
+    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
     internal class TransformTemplate
     {
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
-        [JsonProperty("inputs")]
+        [JsonPropertyName("inputs")]
         public IDictionary<string, int> Inputs { get; set; }
-        [JsonProperty("outputs")]
+        [JsonPropertyName("outputs")]
         public IDictionary<string, int> Outputs { get; set; }
         [JsonIgnore]
         public string Country { get; set; }

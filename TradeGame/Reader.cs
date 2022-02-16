@@ -1,7 +1,7 @@
 ﻿using CsvHelper;
-using Newtonsoft.Json;
 using System.Globalization;
 using System.IO.Abstractions;
+using System.Text.Json;
 
 namespace TradeGame
 {
@@ -14,7 +14,7 @@ namespace TradeGame
             this.fileSystem = fileSystem;
         }
 
-        public IDictionary<string, Resource> ReadResources(string path)
+        public void ReadResources(string path)
         {
             IDictionary<string, Resource> resources = new Dictionary<string, Resource>();
 
@@ -31,10 +31,8 @@ namespace TradeGame
                     Weight = double.Parse(csv.GetField("Weight")),
                     Notes = csv.GetField("Notes")
                 };
-                resources.Add(record.Name, record);
+                Global.Resources.Add(record.Name, record);
             }
-
-            return resources;
         }
 
         public IList<Country> ReadCountries(string path)
@@ -70,7 +68,7 @@ namespace TradeGame
         public IList<TransformTemplate> ReadTransformTemplates(string path)
         {
             using var reader = new StreamReader(fileSystem.File.OpenRead(path));
-            return JsonConvert.DeserializeObject<IList<TransformTemplate>>(reader.ReadToEnd());
+            return JsonSerializer.Deserialize<IList<TransformTemplate>>(reader.ReadToEnd());
         }
     }
 }
