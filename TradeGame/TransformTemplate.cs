@@ -1,15 +1,17 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace TradeGame
 {
     internal class TransformTemplate
     {
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
-        [JsonProperty("inputs")]
-        public IDictionary<string, int> Inputs { get; set; }
-        [JsonProperty("outputs")]
-        public IDictionary<string, int> Outputs { get; set; }
+        [JsonPropertyName("inputs")]
+        [JsonConverter(typeof(ResourceConverter))]
+        public IDictionary<Resource, int> Inputs { get; set; }
+        [JsonPropertyName("outputs")]
+        [JsonConverter(typeof(ResourceConverter))]
+        public IDictionary<Resource, int> Outputs { get; set; }
         [JsonIgnore]
         public string Country { get; set; }
         [JsonIgnore]

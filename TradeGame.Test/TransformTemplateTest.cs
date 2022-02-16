@@ -13,19 +13,19 @@ namespace TradeGame.Test
             TransformTemplate template = new TransformTemplate()
             {
                 Name = "housing",
-                Inputs = new Dictionary<string, int>()
+                Inputs = new Dictionary<Resource, int>()
                     {
-                        { "population", 5 },
-                        { "metallicElements", 1 },
-                        { "timber", 5 },
-                        { "metallicAlloys", 3 },
+                        { new Resource { Name = "population" }, 5 },
+                        { new Resource { Name = "metallicElements" }, 1 },
+                        { new Resource { Name = "timber" }, 5 },
+                        { new Resource { Name = "metallicAlloys" }, 3 },
                     },
-                Outputs = new Dictionary<string, int>()
+                Outputs = new Dictionary<Resource, int>()
                     {
-                        { "housing", 1 },
-                        { "housingWaste", 1 },
-                        { "population", 5 },
-                    }
+                        { new Resource { Name = "housing" }, 1 },
+                        { new Resource { Name = "housingWaste" }, 1 },
+                        { new Resource { Name = "population" }, 5 },
+                    },
             };
             TransformTemplate deepCopy = template.DeepCopy();
             deepCopy.Should().BeEquivalentTo(template);

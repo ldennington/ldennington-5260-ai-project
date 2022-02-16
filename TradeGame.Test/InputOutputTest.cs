@@ -101,28 +101,39 @@ namespace TradeGame.Test
         {
             string templateFilePath = Path.Combine("transform_templates.csv");
             fileSystemMock.AddFile(templateFilePath, TestData.TRANSFORM_TEMPLATE_INPUT);
-            IList<TransformTemplate> expectedTemplates = new List<TransformTemplate>()
+            IList<TransformTemplate> transformTemplates = new List<TransformTemplate>()
             {
                 new TransformTemplate()
                 {
                     Name = "housing",
-                    Inputs = new Dictionary<string, int>()
+                    Inputs = new Dictionary<Resource, int>()
                     {
-                        { "population", 5 },
-                        { "metallicElements", 1 },
-                        { "timber", 5 },
-                        { "metallicAlloys", 3 },
+                        { new Resource { Name = "population" }, 5 },
+                        { new Resource { Name = "metallicElements" }, 1 },
+                        { new Resource { Name = "timber" }, 5 },
+                        { new Resource { Name = "metallicAlloys" }, 3 },
                     },
-                    Outputs = new Dictionary<string, int>()
+                    Outputs = new Dictionary<Resource, int>()
                     {
-                        { "housing", 1 },
-                        { "housingWaste", 1 },
-                        { "population", 5 },
+                        { new Resource { Name = "housing" }, 1 },
+                        { new Resource { Name = "housingWaste" }, 1 },
+                        { new Resource { Name = "population" }, 5 },
                     },
                 }
             };
             IReader reader = new Reader(fileSystemMock);
-            reader.ReadTransformTemplates(templateFilePath).Should().BeEquivalentTo(expectedTemplates);
+            TransformTemplate output = reader.ReadTransformTemplates(templateFilePath)[0];
+            // fluentassertions doesn't support equivalence for dictionary keys, so we compare manually
+            // see https://github.com/fluentassertions/fluentassertions/issues/1136 for details
+            output.Name.Should().Be("housing");
+            output.Inputs.Keys.Should().ContainEquivalentOf(new Resource() { Name = "population" });
+            output.Inputs.Keys.Should().ContainEquivalentOf(new Resource() { Name = "metallicElements" });
+            output.Inputs.Keys.Should().ContainEquivalentOf(new Resource() { Name = "timber" });
+            output.Inputs.Keys.Should().ContainEquivalentOf(new Resource() { Name = "metallicAlloys" });
+            output.Outputs.Keys.Should().ContainEquivalentOf(new Resource() { Name = "population" });
+            output.Outputs.Keys.Should().ContainEquivalentOf(new Resource() { Name = "housing" });
+            output.Outputs.Keys.Should().ContainEquivalentOf(new Resource() { Name = "housingWaste" });
+
         }
     }
 }

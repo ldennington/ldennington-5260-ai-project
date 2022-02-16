@@ -1,7 +1,8 @@
 ﻿using CsvHelper;
-using Newtonsoft.Json;
 using System.Globalization;
 using System.IO.Abstractions;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace TradeGame
 {
@@ -70,7 +71,50 @@ namespace TradeGame
         public IList<TransformTemplate> ReadTransformTemplates(string path)
         {
             using var reader = new StreamReader(fileSystem.File.OpenRead(path));
-            return JsonConvert.DeserializeObject<IList<TransformTemplate>>(reader.ReadToEnd());
+            JsonSerializerOptions options = new()
+            {
+                
+            };
+            return JsonSerializer.Deserialize<IList<TransformTemplate>>(reader.ReadToEnd());
+        }
+    }
+
+    internal class ResourceConverter : JsonConverter<IDictionary<Resource, int>>
+    {
+        public override IDictionary<Resource, int> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            IDictionary<Resource, int> resourcesAndAmounts = new Dictionary<Resource, int>();
+            string currentResource = "";
+
+            while (reader.Read())
+            {
+                switch (reader.TokenType)
+                {
+                    case JsonTokenType.StartObject:
+                    case JsonTokenType.EndObject:
+                        return resourcesAndAmounts;
+                    default:
+                        var input = reader.GetString();
+                        if (!int.TryParse(input, out int result))
+                        {
+                            currentResource = input;
+                            resourcesAndAmounts.Add(new Resource() { Name = currentResource }, 0);
+                        }
+                        else
+                        {
+                            var current = resourcesAndAmounts.Where(x => x.Key.Name == currentResource).FirstOrDefault().Key;
+                            resourcesAndAmounts[current] = result;
+                        }
+                        break;
+                }
+            }
+
+            return null;
+        }
+
+        public override void Write(Utf8JsonWriter writer, IDictionary<Resource, int> value, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
         }
     }
 }
