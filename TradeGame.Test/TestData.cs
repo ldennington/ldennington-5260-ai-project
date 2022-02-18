@@ -56,7 +56,7 @@ namespace TradeGame.Test
                     }
         };
 
-        public static Country COUNTRY = new Country()
+        public static Country INITIAL_COUNTRY = new Country()
         {
             Name = "Atlantis",
             State = new Dictionary<string, int>()
@@ -70,6 +70,20 @@ namespace TradeGame.Test
                 }
         };
 
+        public static Country FINAL_COUNTRY = new Country()
+        {
+            Name = "Atlantis",
+            State = new Dictionary<string, int>()
+                {
+                    { "population", 80 },
+                    { "metallicElements", 900 },
+                    { "timber", 600 },
+                    { "metallicAlloys", 106 },
+                    { "electronics", 380 },
+                    { "housing", 170 }
+                }
+        };
+
         public static IList<Country> INITIAL_STATE = new List<Country>()
         {
             new Country()
@@ -78,12 +92,12 @@ namespace TradeGame.Test
                 IsSelf = true,
                 State = new Dictionary<string, int>()
                 {
-                    { "Population", 100 },
-                    { "Metallic Elements", 700 },
-                    { "Timber", 2000 },
-                    { "Metallic Alloys", 0 },
-                    { "Electronics", 0 },
-                    { "Housing", 0 }
+                    { "population", 100 },
+                    { "metallicElements", 700 },
+                    { "timber", 2000 },
+                    { "metallicAlloys", 0 },
+                    { "electronics", 0 },
+                    { "housing", 0 }
                 }
             },
             new Country()
@@ -91,12 +105,12 @@ namespace TradeGame.Test
                 Name = "Brobdingnag",
                 State = new Dictionary<string, int>()
                 {
-                    { "Population", 50 },
-                    { "Metallic Elements", 300 },
-                    { "Timber", 1200 },
-                    { "Metallic Alloys", 0 },
-                    { "Electronics", 0 },
-                    { "Housing", 0 }
+                    { "population", 50 },
+                    { "metallicElements", 300 },
+                    { "timber", 1200 },
+                    { "metallicAlloys", 0 },
+                    { "electronics", 0 },
+                    { "housing", 0 }
                 }
             },
             new Country()
@@ -104,12 +118,12 @@ namespace TradeGame.Test
                 Name = "Carpania",
                 State = new Dictionary<string, int>()
                 {
-                    { "Population", 25 },
-                    { "Metallic Elements", 100 },
-                    { "Timber", 300 },
-                    { "Metallic Alloys", 0 },
-                    { "Electronics", 0 },
-                    { "Housing", 0 }
+                    { "population", 25 },
+                    { "metallicElements", 100 },
+                    { "timber", 300 },
+                    { "metallicAlloys", 0 },
+                    { "electronics", 0 },
+                    { "housing", 0 }
                 }
             },
             new Country()
@@ -117,12 +131,12 @@ namespace TradeGame.Test
                 Name = "Dinotopia",
                 State = new Dictionary<string, int>()
                 {
-                    { "Population", 30 },
-                    { "Metallic Elements", 200 },
-                    { "Timber", 200 },
-                    { "Metallic Alloys", 0 },
-                    { "Electronics", 0 },
-                    { "Housing", 0 }
+                    { "population", 30 },
+                    { "metallicElements", 200 },
+                    { "timber", 200 },
+                    { "metallicAlloys", 0 },
+                    { "electronics", 0 },
+                    { "housing", 0 }
                 }
             },
             new Country()
@@ -130,13 +144,154 @@ namespace TradeGame.Test
                 Name = "Erewhon",
                 State = new Dictionary<string, int>()
                 {
-                    { "Population", 70 },
-                    { "Metallic Elements", 500 },
-                    { "Timber", 1700 },
-                    { "Metallic Alloys", 0 },
-                    { "Electronics", 0 },
-                    { "Housing", 0 }
+                    { "population", 70 },
+                    { "metallicElements", 500 },
+                    { "timber", 1700 },
+                    { "metallicAlloys", 0 },
+                    { "electronics", 0 },
+                    { "housing", 0 }
                 }
+            },
+        };
+
+        public static IList<Country> FINAL_STATE = new List<Country>()
+        {
+            new Country()
+            {
+                Name = "Atlantis",
+                IsSelf = true,
+                State = new Dictionary<string, int>()
+                {
+                    { "population", 150 },
+                    { "metallicElements", 100 },
+                    { "timber", 1100 },
+                    { "metallicAlloys", 300 },
+                    { "electronics", 506 },
+                    { "housing", 200 }
+                }
+            },
+            new Country()
+            {
+                Name = "Brobdingnag",
+                State = new Dictionary<string, int>()
+                {
+                    { "population", 120 },
+                    { "metallicElements", 950 },
+                    { "timber", 600 },
+                    { "metallicAlloys", 1000 },
+                    { "electronics", 204 },
+                    { "housing", 105 }
+                }
+            },
+            new Country()
+            {
+                Name = "Carpania",
+                State = new Dictionary<string, int>()
+                {
+                    { "population", 130 },
+                    { "metallicElements", 1200 },
+                    { "timber", 150 },
+                    { "metallicAlloys", 450 },
+                    { "electronics", 197 },
+                    { "housing", 55 }
+                }
+            },
+            new Country()
+            {
+                Name = "Dinotopia",
+                State = new Dictionary<string, int>()
+                {
+                    { "population", 35 },
+                    { "metallicElements", 986 },
+                    { "timber", 122 },
+                    { "metallicAlloys", 253 },
+                    { "electronics", 157 },
+                    { "housing", 68 }
+                }
+            },
+            new Country()
+            {
+                Name = "Erewhon",
+                State = new Dictionary<string, int>()
+                {
+                    { "population", 220 },
+                    { "metallicElements", 1700 },
+                    { "timber", 1000 },
+                    { "metallicAlloys", 1100 },
+                    { "electronics", 656 },
+                    { "housing", 180 }
+                }
+            },
+        };
+
+        // a smaller list of countries makes calculation tests easier
+        public static IList<Country> TWO_COUNTRY_STATE = new List<Country>()
+        {
+            new Country()
+            {
+                Name = "Atlantis",
+                IsSelf = true,
+                State = new Dictionary<string, int>()
+                {
+                    { "population", 150 },
+                    { "metallicElements", 100 },
+                    { "timber", 1100 },
+                    { "metallicAlloys", 300 },
+                    { "electronics", 506 },
+                    { "housing", 200 }
+                }
+            },
+            new Country()
+            {
+                Name = "Brobdingnag",
+                State = new Dictionary<string, int>()
+                {
+                    { "population", 120 },
+                    { "metallicElements", 950 },
+                    { "timber", 600 },
+                    { "metallicAlloys", 1000 },
+                    { "electronics", 204 },
+                    { "housing", 105 }
+                }
+            },
+        };
+
+        public static IList<ITemplate> SCHEDULE = new List<ITemplate>()
+        {
+            new TransformTemplate()
+            {
+                Name = "housing",
+                Country = "Atlantis",
+                Inputs = new Dictionary<string, int>()
+                        {
+                            { "population", 25 },
+                            { "metallicElements", 5 },
+                            { "timber", 25 },
+                            { "metallicAlloys", 15 },
+                        },
+                Outputs = new Dictionary<string, int>()
+                        {
+                            { "housing", 5 },
+                            { "housingWaste", 5 },
+                            { "population", 25 },
+                        }
+            },
+            new TransformTemplate()
+            {
+                Name = "electronics",
+                Country = "Atlantis",
+                Inputs = new Dictionary<string, int>()
+                        {
+                            { "population", 2 },
+                            { "metallicElements", 6 },
+                            { "metallicAlloys", 4 },
+                        },
+                Outputs = new Dictionary<string, int>()
+                        {
+                            { "electronicsWaste", 1 },
+                            { "electronics", 2 },
+                            { "population", 2 },
+                        }
             },
         };
     }
