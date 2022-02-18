@@ -10,8 +10,9 @@ namespace TradeGame.Test
     {
         private Country initial_country;
         private Country final_country;
-        private IList<ITemplate> schedule;
+        private IList<IAction> schedule;
         private IList<Country> twoCountryState;
+        ICalculator calculator;
 
         [TestInitialize]
         public void Initialize()
@@ -51,7 +52,7 @@ namespace TradeGame.Test
                 }
             };
 
-            schedule = new List<ITemplate>()
+            schedule = new List<IAction>()
             {
                 new TransformTemplate()
                 {
@@ -120,6 +121,8 @@ namespace TradeGame.Test
                     }
                 },
             };
+
+            calculator = new Calculator();
         }
 
         [TestCleanup]
@@ -136,10 +139,8 @@ namespace TradeGame.Test
         [TestMethod]
         public void CalculateExpectedUtility()
         {
-            double expectedProbability = 9.07;
-
-            Calculator calculator = new Calculator();
-            calculator.CalculateExpectedUtility(schedule, initial_country, final_country).Should().Be(expectedProbability);
+            double expectedUtility = 9.07;
+            calculator.CalculateExpectedUtility(schedule, initial_country, final_country).Should().Be(expectedUtility);
         }
 
         [TestMethod]
@@ -148,7 +149,6 @@ namespace TradeGame.Test
             double atlantisExpectedStateQuality = 35.53;
             double brobdingnagExpectedStateQuality = 71.92;
 
-            Calculator calculator = new Calculator();
             calculator.CalculateStateQuality(twoCountryState);
 
             double atlantisStateQuality = twoCountryState.Where(c => c.Name.Equals("atlantis", System.StringComparison.OrdinalIgnoreCase)).FirstOrDefault().StateQuality;
@@ -162,8 +162,6 @@ namespace TradeGame.Test
         public void CalculateUndiscountedReward()
         {
             double expectedUndiscountedReward = 36.30;
-
-            Calculator calculator = new Calculator();
             calculator.CalculateUndiscountedReward(initial_country, final_country).Should().Be(expectedUndiscountedReward);
         }
 
@@ -171,8 +169,6 @@ namespace TradeGame.Test
         public void CalculateDiscountedReward()
         {
             double expectedDiscountedReward = 9.07;
-
-            Calculator calculator = new Calculator();
             calculator.CalculateDiscountedReward(schedule, initial_country, final_country).Should().Be(expectedDiscountedReward);
         }
 
@@ -180,8 +176,6 @@ namespace TradeGame.Test
         public void CalculateProbabilityOfParticipation()
         {
             double expectedProbability = 1.00;
-
-            Calculator calculator = new Calculator();
             calculator.CalculateProbabilityOfAcceptance(schedule, initial_country, final_country).Should().Be(expectedProbability);
         }
     }
