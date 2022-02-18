@@ -10,6 +10,46 @@ namespace TradeGame.Test
     public class InputOutputTest
     {
         private readonly MockFileSystem fileSystemMock = new MockFileSystem();
+        private string resourceInput;
+        private string countryInput;
+        private string transformTemplateInput;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            resourceInput = string.Concat("Resource,Weight,Notes\n",
+                                        "R1,0,analog to population\n",
+                                        "R2,0,analog to metallic elements\n",
+                                        "R3,0,analog to timber\n",
+                                        "R21,0.2,analog to metallic alloys\n",
+                                        "R22,0.5,analog to electronics\n",
+                                        "R23,0.8,analog to housing (and housing sufficiency)\n",
+                                        "R21',0.5,waste\n",
+                                        "R22',0.8,waste\n",
+                                        "R23',0.4,waste");
+
+            countryInput = string.Concat(string.Concat("Country,R1,R2,R3,R21,R22,R23\n",
+                                        "Atlantis,100,700,2000,0,0,0\n",
+                                        "Brobdingnag,50,300,1200,0,0,0\n",
+                                        "Carpania,25,100,300,0,0,0\n",
+                                        "Dinotopia,30,200,200,0,0,0\n",
+                                        "Erewhon,70,500,1700,0,0,0"));
+
+            transformTemplateInput = @"[{
+	            ""name"": ""housing"",
+	            ""inputs"": {
+		            ""population"": ""5"",
+		            ""metallicElements"": ""1"",
+		            ""timber"": ""5"",
+		            ""metallicAlloys"": ""3""
+	            },
+	            ""outputs"": {
+		            ""housing"": ""1"",
+		            ""housingWaste"": ""1"",
+		            ""population"": ""5""
+	            }
+            }]";
+        }
 
         [TestMethod]
         public void ReadResourceInput()
@@ -27,7 +67,7 @@ namespace TradeGame.Test
                 { "R22'", new Resource() { Name = "R22'", Weight = 0.8, Notes = "waste" }},
                 { "R23'", new Resource() { Name = "R23'", Weight = 0.4, Notes = "waste" }}
             };
-            fileSystemMock.AddFile(resourceFilePath, TestData.RESOURCE_INPUT);
+            fileSystemMock.AddFile(resourceFilePath, resourceInput);
 
             IReader reader = new Reader(fileSystemMock);
             reader.ReadResources(resourceFilePath);
@@ -38,7 +78,7 @@ namespace TradeGame.Test
         public void ReadCountryInput()
         {
             string countryFilePath = Path.Combine("C:", "countries.csv");
-            fileSystemMock.AddFile(countryFilePath, TestData.COUNTRY_INPUT);
+            fileSystemMock.AddFile(countryFilePath, countryInput);
             IList<Country> expectedCountriesAndResources = new List<Country>()
                 {
                     new Country() { Name = "Atlantis", State = new Dictionary<string, int>()
@@ -101,7 +141,7 @@ namespace TradeGame.Test
         public void ReadTransformTemplateInput()
         {
             string templateFilePath = Path.Combine("transform_templates.csv");
-            fileSystemMock.AddFile(templateFilePath, TestData.TRANSFORM_TEMPLATE_INPUT);
+            fileSystemMock.AddFile(templateFilePath, transformTemplateInput);
             IList<TransformTemplate> expected = new List<TransformTemplate>()
             {
                 new TransformTemplate()

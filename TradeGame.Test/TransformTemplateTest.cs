@@ -10,9 +10,27 @@ namespace TradeGame.Test
         [TestMethod]
         public void DeepCopy()
         {
-            TransformTemplate deepCopy = TestData.TRANSFORM_TEMPLATE.DeepCopy();
-            deepCopy.Should().BeEquivalentTo(TestData.TRANSFORM_TEMPLATE);
-            deepCopy.Should().NotBeSameAs(TestData.TRANSFORM_TEMPLATE);
+            TransformTemplate transformTemplate = new TransformTemplate()
+            {
+                Name = "housing",
+                Inputs = new Dictionary<string, int>()
+                {
+                    { "population", 5 },
+                    { "metallicElements", 1 },
+                    { "timber", 5 },
+                    { "metallicAlloys", 3 },
+                },
+                Outputs = new Dictionary<string, int>()
+                {
+                    { "housing", 1 },
+                    { "housingWaste", 1 },
+                    { "population", 5 },
+                },
+            };
+
+            TransformTemplate deepCopy = transformTemplate.DeepCopy();
+            deepCopy.Should().BeEquivalentTo(transformTemplate);
+            deepCopy.Should().NotBeSameAs(transformTemplate);
         }
     }
 }
