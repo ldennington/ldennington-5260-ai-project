@@ -1,6 +1,6 @@
-﻿namespace TradeGame
+namespace TradeGame
 {
-    internal class TransferTemplate
+    internal class TransferTemplate : ITemplate
     {
         public string TransferringCountry { get; set; }
         public string ReceivingCountry { get; set; }
