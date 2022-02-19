@@ -14,6 +14,8 @@ namespace TradeGame
             this.fileSystem = fileSystem;
         }
 
+        /* adapted from Jeff Baranski's Python file parser
+        at https://gist.github.com/jbaranski/209d475c21fe0459c2499ed606cfad9b */
         public void ReadResources(string path)
         {
             IDictionary<string, Resource> resources = new Dictionary<string, Resource>();
@@ -35,6 +37,8 @@ namespace TradeGame
             }
         }
 
+        /* adapted from Jeff Baranski's Python file parser
+        at https://gist.github.com/jbaranski/209d475c21fe0459c2499ed606cfad9b  */
         public IList<Country> ReadCountries(string path)
         {
             IList<Country> countries = new List<Country>();

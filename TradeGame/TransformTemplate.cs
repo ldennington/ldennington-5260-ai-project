@@ -2,9 +2,12 @@
 
 namespace TradeGame
 {
+    /* adapted from Katherine Studzinski's explanation of her solution
+    at https://piazza.com/class/kyz01i5gip25bn?cid=60_f1 */
+
     // ensures we can deserialize numbers as numbers instead of strings
     [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
-    internal class TransformTemplate : ITemplate
+    internal class TransformTemplate : IAction
     {
         [JsonPropertyName("name")]
         public string Name { get; set; }

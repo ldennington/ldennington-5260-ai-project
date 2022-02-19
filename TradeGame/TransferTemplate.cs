@@ -1,6 +1,8 @@
 namespace TradeGame
 {
-    internal class TransferTemplate : ITemplate
+    /* adapted from Katherine Studzinski's explanation of her solution
+    at https://piazza.com/class/kyz01i5gip25bn?cid=60_f1 */
+    internal class TransferTemplate : IAction
     {
         public string TransferringCountry { get; set; }
         public string ReceivingCountry { get; set; }

@@ -10,6 +10,8 @@ namespace TradeGame.Test
     public class InputOutputTest
     {
         private readonly MockFileSystem fileSystemMock = new MockFileSystem();
+        private IReader reader;
+
         private string resourceInput;
         private string countryInput;
         private string transformTemplateInput;
@@ -49,6 +51,8 @@ namespace TradeGame.Test
 		            ""population"": ""5""
 	            }
             }]";
+
+            reader = new Reader(fileSystemMock);
         }
 
         [TestMethod]
@@ -69,7 +73,6 @@ namespace TradeGame.Test
             };
             fileSystemMock.AddFile(resourceFilePath, resourceInput);
 
-            IReader reader = new Reader(fileSystemMock);
             reader.ReadResources(resourceFilePath);
             Global.Resources.Should().BeEquivalentTo(expectedResources);
         }
@@ -133,7 +136,6 @@ namespace TradeGame.Test
                     },
                 };
 
-            IReader reader = new Reader(fileSystemMock);
             reader.ReadCountries(countryFilePath).Should().BeEquivalentTo(expectedCountriesAndResources);
         }
 
@@ -162,7 +164,7 @@ namespace TradeGame.Test
                     },
                 }
             };
-            IReader reader = new Reader(fileSystemMock);
+
             reader.ReadTransformTemplates(templateFilePath).Should().BeEquivalentTo(expected);
         }
     }
