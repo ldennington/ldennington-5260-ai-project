@@ -15,9 +15,10 @@ namespace TradeGame
         static IHostBuilder CreateHostBuilder(string[] args) =>
            Host.CreateDefaultBuilder(args)
                 .ConfigureServices((_, services) =>
-                    services.AddSingleton<IAction, TransferTemplate>()
-                            .AddSingleton<IAction, TransformTemplate>()
+                    services.AddSingleton<Action, TransferTemplate>()
+                            .AddSingleton<Action, TransformTemplate>()
                             .AddSingleton<ICalculator, Calculator>()
-                            .AddSingleton<IReader, Reader>());
+                            .AddSingleton<IReader, Reader>()
+                            .AddSingleton<IWriter, Writer>());
     }
 }

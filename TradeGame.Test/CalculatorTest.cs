@@ -10,7 +10,7 @@ namespace TradeGame.Test
     {
         private Country initial_country;
         private Country final_country;
-        private IList<IAction> schedule;
+        private IList<Action> schedule;
         private IList<Country> twoCountryState;
         ICalculator calculator;
 
@@ -52,7 +52,7 @@ namespace TradeGame.Test
                 }
             };
 
-            schedule = new List<IAction>()
+            schedule = new List<Action>()
             {
                 new TransformTemplate()
                 {

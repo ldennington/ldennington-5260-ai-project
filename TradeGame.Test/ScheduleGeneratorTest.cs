@@ -87,11 +87,5 @@ namespace TradeGame.Test
             generator.SetScale(transformTemplate, country);
             transformTemplate.Scale.Should().Be(1);
         }
-
-        [TestMethod]
-        public void GenerateSuccessors()
-        {
-
-        }
     }
 }
