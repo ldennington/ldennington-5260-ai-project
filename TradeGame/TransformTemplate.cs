@@ -7,7 +7,7 @@ namespace TradeGame
 
     // ensures we can deserialize numbers as numbers instead of strings
     [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
-    internal class TransformTemplate : IAction
+    internal class TransformTemplate : Action
     {
         [JsonPropertyName("name")]
         public string Name { get; set; }
@@ -19,6 +19,7 @@ namespace TradeGame
         public string Country { get; set; }
         [JsonIgnore]
         public int Scale { get; set; }
+        public string Type { get; } = "transform";
 
         public TransformTemplate DeepCopy()
         {

@@ -9,17 +9,17 @@
             this.calculator = calculator;
         }
 
-        public PriorityQueue<IList<IAction>, double> Search(Node startNode, int depthBound = 3)
+        public PriorityQueue<Schedule, double> Search(Node startNode, int depthBound = 3)
         {
             // C# priority queue defaults to dequeuing lowest scores first
             // override this with a custom comparer to dequeue highest scores first
             ScheduleComparer customComparer = new ScheduleComparer();
-            PriorityQueue<IList<IAction>, double> solutions = new PriorityQueue<IList<IAction>, double>(customComparer);
+            PriorityQueue<Schedule, double> solutions = new PriorityQueue<Schedule, double>(customComparer);
             PriorityQueue<Node, double> frontier = new PriorityQueue<Node, double>(customComparer);
 
             // add initial state to frontier
             Country selfInitialState = startNode.State.Where(c => c.IsSelf).FirstOrDefault();
-            double initialExpectedUtility = calculator.CalculateExpectedUtility(new List<IAction>(), selfInitialState, selfInitialState);
+            double initialExpectedUtility = calculator.CalculateExpectedUtility(new List<Action>(), selfInitialState, selfInitialState);
             frontier.Enqueue(startNode, initialExpectedUtility);
 
             while(frontier.Count > 0)
@@ -27,14 +27,18 @@
                 Node currentNode = frontier.Dequeue();
                 if (currentNode.Depth >= depthBound)
                 {
-                    double currentExpectedUtility = calculator.CalculateExpectedUtility(currentNode.Schedule, selfInitialState, currentNode.State.Where(c => c.IsSelf).FirstOrDefault());
-                    solutions.Enqueue(currentNode.Schedule, currentExpectedUtility);
+                    double currentExpectedUtility = calculator.CalculateExpectedUtility(currentNode.Steps, selfInitialState, currentNode.State.Where(c => c.IsSelf).FirstOrDefault());
+                    solutions.Enqueue(new Schedule()
+                    {
+                        Steps = currentNode.Steps,
+                        ExpectedUtility = currentExpectedUtility
+                    }, currentExpectedUtility);
                 }
                 else
                 {
                     foreach(Node successor in GenerateSuccessors(currentNode))
                     {
-                        double successorExpectedUtility = calculator.CalculateExpectedUtility(currentNode.Schedule, selfInitialState, currentNode.State.Where(c => c.IsSelf).FirstOrDefault());
+                        double successorExpectedUtility = calculator.CalculateExpectedUtility(currentNode.Steps, selfInitialState, currentNode.State.Where(c => c.IsSelf).FirstOrDefault());
                         frontier.Enqueue(successor, successorExpectedUtility);
                     }
                 }
@@ -65,10 +69,10 @@
                 successor.Parent = currentNode;
                 // initially set successor state and schedule to be the same as that of current node
                 successor.State = currentNode.State;
-                successor.Schedule = currentNode.Schedule;
+                successor.Steps = currentNode.Steps;
 
                 // update successor state and schedule
-                successor.Schedule.Add(grounded);
+                successor.Steps.Add(grounded);
                 ExecuteTransform(grounded, successor.State.Where(c => c.IsSelf).FirstOrDefault());
 
                 successors.Add(successor);
@@ -78,7 +82,7 @@
         }
 
         /* adapted from Jeff Baranski's explanation of his solution
-        at https://piazza.com/class/kyz01i5gip25bn?cid=60_f2  */
+        at https://piazza.com/class/kyz01i5gip25bn?cid=60_f2 */
         public void SetScale(TransformTemplate template, Country country)
         {
             int[] maxes = new int[template.Inputs.Count];

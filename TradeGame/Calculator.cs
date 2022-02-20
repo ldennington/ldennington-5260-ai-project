@@ -2,7 +2,7 @@
 {
     internal class Calculator : ICalculator
     {
-        public double CalculateExpectedUtility(IList<IAction> schedule, Country initial_country, Country ending_country)
+        public double CalculateExpectedUtility(IList<Action> schedule, Country initial_country, Country ending_country)
         {
             int costOfFailure = -3;
             double discountedReward = CalculateDiscountedReward(schedule, initial_country, ending_country);
@@ -50,7 +50,7 @@
             return Math.Round(ending_country.StateQuality - initial_country.StateQuality, 2);
         }
 
-        public double CalculateDiscountedReward(IList<IAction> schedule, Country initial_country, Country ending_country)
+        public double CalculateDiscountedReward(IList<Action> schedule, Country initial_country, Country ending_country)
         {
             double gamma = 0.5;
             double undiscountedReward = CalculateUndiscountedReward(initial_country, ending_country);
@@ -59,7 +59,7 @@
             return Math.Round(Math.Pow(gamma, schedule.Count) * undiscountedReward, 2);
         }
 
-        public double CalculateProbabilityOfAcceptance(IList<IAction> schedule, Country initial_country, Country ending_country)
+        public double CalculateProbabilityOfAcceptance(IList<Action> schedule, Country initial_country, Country ending_country)
         {
             int x_0 = 0;
             int k = 1;

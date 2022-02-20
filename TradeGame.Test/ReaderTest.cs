@@ -7,7 +7,7 @@ using System.IO.Abstractions.TestingHelpers;
 namespace TradeGame.Test
 {
     [TestClass]
-    public class InputOutputTest
+    public class ReaderTest
     {
         private readonly MockFileSystem fileSystemMock = new MockFileSystem();
         private IReader reader;

@@ -14,6 +14,6 @@
             }
         }
         public IList<Country> State { get; set; } = new List<Country>();
-        public IList<IAction> Schedule { get; set; } = new List<IAction>();
+        public IList<Action> Steps { get; set; } = new List<Action>();
     }
 }
