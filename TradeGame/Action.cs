@@ -12,9 +12,9 @@ namespace TradeGame
         public string Type { get; set; }
     }
 
-    // System.Text.Json cannot serialize interfaces.
+    // System.Text.Json cannot serialize/deserialize abstract classes.
     // this custom converter allows us to get the underlying types
-    // (TransferTemplate/TransformTemplate) and serialize those instead
+    // (TransferTemplate/TransformTemplate) and work with those instead
     internal class ActionConverter : JsonConverter<Action>
     {
         public override Action Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

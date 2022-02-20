@@ -1,7 +1,7 @@
 ﻿namespace TradeGame
 {
-    internal interface IWriter
+    public interface IWriter
     {
-        void WriteSchedules(PriorityQueue<Schedule, double> schedules);
+        void WriteSchedules();
     }
 }

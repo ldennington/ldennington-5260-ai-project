@@ -39,7 +39,7 @@ namespace TradeGame
 
         /* adapted from Jeff Baranski's Python file parser
         at https://gist.github.com/jbaranski/209d475c21fe0459c2499ed606cfad9b  */
-        public IList<Country> ReadCountries(string path)
+        public void ReadCountries(string path)
         {
             IList<Country> countries = new List<Country>();
 
@@ -63,16 +63,14 @@ namespace TradeGame
                     record.State.Add(resource, int.Parse(csv.GetField(resource)));
                 }
 
-                countries.Add(record);
+                Global.InitialState.Add(record);
             }
-
-            return countries;
         }
 
-        public IList<TransformTemplate> ReadTransformTemplates(string path)
+        public void ReadTransformTemplates(string path)
         {
             using var reader = new StreamReader(fileSystem.File.OpenRead(path));
-            return JsonSerializer.Deserialize<IList<TransformTemplate>>(reader.ReadToEnd());
+            Global.TransformTemplates = JsonSerializer.Deserialize<IList<TransformTemplate>>(reader.ReadToEnd());
         }
     }
 }
