@@ -1,11 +1,11 @@
 ﻿namespace TradeGame
 {
-    internal interface IReader
+    public interface IReader
     {
-        public void ReadResources(string path);
+         void ReadResources(string path);
 
-        public IList<Country> ReadCountries(string path);
+         void ReadCountries(string path);
 
-        public IList<TransformTemplate> ReadTransformTemplates(string path);
+         void ReadTransformTemplates(string path);
     }
 }

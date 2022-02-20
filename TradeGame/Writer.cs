@@ -1,30 +1,30 @@
 ﻿using System.IO.Abstractions;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace TradeGame
 {
     internal class Writer : IWriter
     {
         private IFileSystem fileSystem;
+        private IEnv env;
 
-        public Writer(IFileSystem fileSystem)
+        public Writer(IFileSystem fileSystem, IEnv env)
         {
             this.fileSystem = fileSystem;
+            this.env = env;
         }
 
-        public void WriteSchedules(PriorityQueue<Schedule, double> schedules)
+        public void WriteSchedules()
         {
-            IList<Schedule> formattedSchedules = new List<Schedule>();
-            while (schedules.Count > 0)
+            IList<Schedule> schedules = new List<Schedule>();
+            while (Global.Schedules.Count > 0)
             {
-                formattedSchedules.Add(schedules.Dequeue());
+                schedules.Add(Global.Schedules.Dequeue());
             }
 
-            string outputFileName = "output_schedules.json";
-            string jsonString = JsonSerializer.Serialize(formattedSchedules,
-                new JsonSerializerOptions() { WriteIndented = true });
-            fileSystem.File.WriteAllText(outputFileName, jsonString);
+            string outputFileName = "output-schedules.json";
+            fileSystem.File.WriteAllText(Path.Combine(env.Get("TEMP"), outputFileName), JsonSerializer.Serialize(schedules,
+                new JsonSerializerOptions() { WriteIndented = true }));
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using System.IO.Abstractions;
 
 namespace TradeGame
 {
@@ -7,18 +7,20 @@ namespace TradeGame
     {
         static void Main(string[] args)
         {
-            using IHost host = CreateHostBuilder(args).Build();
-            host.RunAsync();
-        }
+            // set up DI
+            var serviceProvider = new ServiceCollection()
+                .AddSingleton<ICalculator, Calculator>()
+                .AddSingleton<IReader, Reader>()
+                .AddSingleton<IWriter, Writer>()
+                .AddSingleton<IFileSystem, FileSystem>()
+                .AddSingleton<IEnv, Env>()
+                .AddSingleton<Action, TransferTemplate>()
+                .AddSingleton<Action, TransformTemplate>()
+                .AddSingleton<ScheduleGenerator>()
+                .BuildServiceProvider();
 
-        // set up service container for DI and register services
-        static IHostBuilder CreateHostBuilder(string[] args) =>
-           Host.CreateDefaultBuilder(args)
-                .ConfigureServices((_, services) =>
-                    services.AddSingleton<Action, TransferTemplate>()
-                            .AddSingleton<Action, TransformTemplate>()
-                            .AddSingleton<ICalculator, Calculator>()
-                            .AddSingleton<IReader, Reader>()
-                            .AddSingleton<IWriter, Writer>());
+            var scheduleGenerator = serviceProvider.GetService<ScheduleGenerator>();
+            scheduleGenerator.Execute();
+        }
     }
 }

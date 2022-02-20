@@ -136,7 +136,8 @@ namespace TradeGame.Test
                     },
                 };
 
-            reader.ReadCountries(countryFilePath).Should().BeEquivalentTo(expectedCountriesAndResources);
+            reader.ReadCountries(countryFilePath);
+            Global.InitialState.Should().BeEquivalentTo(expectedCountriesAndResources);
         }
 
         [TestMethod]
@@ -165,7 +166,8 @@ namespace TradeGame.Test
                 }
             };
 
-            reader.ReadTransformTemplates(templateFilePath).Should().BeEquivalentTo(expected);
+            reader.ReadTransformTemplates(templateFilePath);
+            Global.TransformTemplates.Should().BeEquivalentTo(expected);
         }
     }
 }

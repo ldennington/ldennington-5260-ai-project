@@ -1,6 +1,8 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Abstractions.TestingHelpers;
 using System.Text.RegularExpressions;
 
@@ -13,9 +15,13 @@ namespace TradeGame.Test
         public void WriteSchedules()
         {
             MockFileSystem fileSystemMock = new MockFileSystem();
+            Mock<IEnv> envMock = new Mock<IEnv>();
 
-            PriorityQueue<Schedule, double> schedules = new PriorityQueue<Schedule, double>();
-            schedules.Enqueue(new Schedule()
+            string tempDirectory = Path.Combine("C:", "temp");
+            envMock.Setup(e => e.Get("TEMP")).Returns(tempDirectory);
+            fileSystemMock.Directory.CreateDirectory(tempDirectory);
+
+            Global.Schedules.Enqueue(new Schedule()
             {
                 ExpectedUtility = 14.2,
                 Steps = new List<Action>() {
@@ -57,9 +63,9 @@ namespace TradeGame.Test
                 }
             }, 14.2);
 
-            schedules.Enqueue(new Schedule()
+            Global.Schedules.Enqueue(new Schedule()
             {
-                ExpectedUtility = 14.2,
+                ExpectedUtility = 9.5,
                 Steps = new List<Action>() {
                     new TransformTemplate()
                     {
@@ -101,38 +107,6 @@ namespace TradeGame.Test
                 {
                   ""Steps"": [
                     {
-                      ""name"": ""electronics"",
-                      ""inputs"": {
-                        ""population"": 1,
-                        ""metallicElements"": 3,
-                        ""metallicAlloys"": 2
-                      },
-                      ""outputs"": {
-                        ""population"": 1,
-                        ""electronics"": 2,
-                        ""electronicsWaste"": 1
-                      },
-                      ""Type"": ""transform""
-                    },
-                    {
-                      ""name"": ""alloys"",
-                      ""inputs"": {
-                        ""population"": 1,
-                        ""metallicElements"": 2
-                      },
-                      ""outputs"": {
-                        ""population"": 1,
-                        ""metallicAlloys"": 1,
-                        ""metallicAlloysWaste"": 1
-                      },
-                      ""Type"": ""transform""
-                    }
-                  ],
-                  ""ExpectedUtility"": 14.2
-                },
-                {
-                  ""Steps"": [
-                    {
                       ""name"": ""housing"",
                       ""inputs"": {
                         ""population"": 5,
@@ -163,14 +137,48 @@ namespace TradeGame.Test
                     }
                   ],
                   ""ExpectedUtility"": 14.2
+                },
+                {
+                  ""Steps"": [
+                    {
+                      ""name"": ""electronics"",
+                      ""inputs"": {
+                        ""population"": 1,
+                        ""metallicElements"": 3,
+                        ""metallicAlloys"": 2
+                      },
+                      ""outputs"": {
+                        ""population"": 1,
+                        ""electronics"": 2,
+                        ""electronicsWaste"": 1
+                      },
+                      ""Type"": ""transform""
+                    },
+                    {
+                      ""name"": ""alloys"",
+                      ""inputs"": {
+                        ""population"": 1,
+                        ""metallicElements"": 2
+                      },
+                      ""outputs"": {
+                        ""population"": 1,
+                        ""metallicAlloys"": 1,
+                        ""metallicAlloysWaste"": 1
+                      },
+                      ""Type"": ""transform""
+                    }
+                  ],
+                  ""ExpectedUtility"": 9.5
                 }
               ]";
 
-            IWriter writer = new Writer(fileSystemMock);
-            writer.WriteSchedules(schedules);
-            fileSystemMock.AllFiles.Should().Contain(@"C:\output_schedules.json");
+            IWriter writer = new Writer(fileSystemMock, envMock.Object);
+            writer.WriteSchedules();
+
+            string fullPath = Path.Combine(tempDirectory, "output-schedules.json");
+            fileSystemMock.AllFiles.Should().Contain(fullPath);
             // use Regex to remove all whitespace from strings for comparison
-            Regex.Replace(fileSystemMock.File.ReadAllText(@"C:\output_schedules.json"), @"\s+", "").Should().BeEquivalentTo(Regex.Replace(expectedOutput, @"\s+", ""));
+            Regex.Replace(fileSystemMock.File.ReadAllText(fullPath), @"\s+", "").Should().BeEquivalentTo(Regex.Replace(expectedOutput, @"\s+", ""));
         }
     }
 }

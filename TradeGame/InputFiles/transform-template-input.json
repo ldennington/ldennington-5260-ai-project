@@ -1,0 +1,41 @@
+[
+  {
+    "name": "housing",
+    "inputs": {
+      "population": "5",
+      "metallicElements": "1",
+      "timber": "5",
+      "metallicAlloys": "3"
+    },
+    "outputs": {
+      "housing": "1",
+      "housingWaste": "1",
+      "population": "5"
+    }
+  },
+  {
+    "name": "alloys",
+    "inputs": {
+      "population": "1",
+      "metallicElements": "2"
+    },
+    "outputs": {
+      "metallicAlloys": "1",
+      "metallicAlloysWaste": "1",
+      "population": "1"
+    }
+  },
+  {
+    "name": "electronics",
+    "inputs": {
+      "population": "1",
+      "metallicElements": "3",
+      "metallicAlloys": "2"
+    },
+    "outputs": {
+      "electronics": "2",
+      "electronicsWaste": "1",
+      "population": "1"
+    }
+  }
+]

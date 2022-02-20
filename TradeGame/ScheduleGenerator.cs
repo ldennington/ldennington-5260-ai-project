@@ -2,19 +2,49 @@
 {
     internal class ScheduleGenerator
     {
+        private IReader reader;
+        private IWriter writer;
         private ICalculator calculator;
 
-        public ScheduleGenerator(ICalculator calculator)
+        public ScheduleGenerator(IReader reader, IWriter writer, ICalculator calculator)
         {
+            this.reader = reader;
+            this.writer = writer;
             this.calculator = calculator;
         }
 
-        public PriorityQueue<Schedule, double> Search(Node startNode, int depthBound = 3)
+        public void Execute()
+        {
+            // read input
+            ReadFiles();
+
+            // designate self
+            Country self = Global.InitialState.Where(x => x.Name.Equals("atlantis", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+            self.IsSelf = true;
+
+            // execute search
+            Node startNode = new Node()
+            {
+                State = Global.InitialState
+            };
+            Search(startNode);
+
+            // write results
+            writer.WriteSchedules();
+        }
+
+        public void ReadFiles()
+        {
+            reader.ReadResources(Path.Combine(Directory.GetCurrentDirectory(), "InputFiles", "resource-input.csv"));
+            reader.ReadTransformTemplates(Path.Combine(Directory.GetCurrentDirectory(), "InputFiles", "transform-template-input.json"));
+            reader.ReadCountries(Path.Combine(Directory.GetCurrentDirectory(), "InputFiles", "country-input.csv"));
+        }
+
+        public void Search(Node startNode, int depthBound = 3)
         {
             // C# priority queue defaults to dequeuing lowest scores first
             // override this with a custom comparer to dequeue highest scores first
             ScheduleComparer customComparer = new ScheduleComparer();
-            PriorityQueue<Schedule, double> solutions = new PriorityQueue<Schedule, double>(customComparer);
             PriorityQueue<Node, double> frontier = new PriorityQueue<Node, double>(customComparer);
 
             // add initial state to frontier
@@ -28,7 +58,7 @@
                 if (currentNode.Depth >= depthBound)
                 {
                     double currentExpectedUtility = calculator.CalculateExpectedUtility(currentNode.Steps, selfInitialState, currentNode.State.Where(c => c.IsSelf).FirstOrDefault());
-                    solutions.Enqueue(new Schedule()
+                    Global.Schedules.Enqueue(new Schedule()
                     {
                         Steps = currentNode.Steps,
                         ExpectedUtility = currentExpectedUtility
@@ -43,8 +73,6 @@
                     }
                 }
             }
-
-            return solutions;
         }
 
         // operator rules of thumb?

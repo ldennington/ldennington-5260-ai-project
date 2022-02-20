@@ -8,10 +8,14 @@ namespace TradeGame.Test
     [TestClass]
     public class ScheduleGeneratorTest
     {
+        private Mock<ICalculator> calculatorMock = new Mock<ICalculator>();
+        private Mock<IReader> readerMock = new Mock<IReader>();
+        private Mock<IWriter> writerMock = new Mock<IWriter>();
+
         private TransformTemplate transformTemplate;
         private Country country;
-        private Mock<ICalculator> calculatorMock = new Mock<ICalculator>();
-        ScheduleGenerator generator;
+        
+        private ScheduleGenerator generator;
 
         [TestInitialize]
         public void Initialize()
@@ -48,7 +52,7 @@ namespace TradeGame.Test
                 }
             };
 
-            generator = new ScheduleGenerator(calculatorMock.Object);
+            generator = new ScheduleGenerator(readerMock.Object, writerMock.Object, calculatorMock.Object);
         }
 
         [TestCleanup]
