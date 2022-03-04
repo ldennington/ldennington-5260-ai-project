@@ -111,8 +111,9 @@
             return successors;
         }
 
-        /* adapted from Jeff Baranski's explanation of his solution
-        at https://piazza.com/class/kyz01i5gip25bn?cid=60_f2 */
+        /* The SetScale method helps satisfy preconditions and was adapted from
+           Jeff Baranski's explanation of his solution at
+           https://piazza.com/class/kyz01i5gip25bn?cid=60_f2 */
         public void SetScale(TransformTemplate template, Country country)
         {
             int[] maxes = new int[template.Inputs.Count];

@@ -2,8 +2,8 @@
 
 namespace TradeGame
 {
-    /* adapted from Katherine Studzinski's explanation of her solution
-    at https://piazza.com/class/kyz01i5gip25bn?cid=60_f1 */
+    /* The TransformTemplate class was adapted from Katherine Studzinski's explanation
+       of her solution at https://piazza.com/class/kyz01i5gip25bn?cid=60_f1 */
 
     // ensures we can deserialize numbers as numbers instead of strings
     [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
@@ -19,7 +19,6 @@ namespace TradeGame
         public string Country { get; set; }
         [JsonIgnore]
         public int Scale { get; set; }
-        public string Type { get; } = "transform";
 
         public TransformTemplate DeepCopy()
         {
