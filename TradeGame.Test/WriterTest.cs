@@ -104,73 +104,73 @@ namespace TradeGame.Test
             }, 9.5);
 
             string expectedOutput = @"[
-                {
-                  ""Steps"": [
-                    {
-                      ""name"": ""housing"",
-                      ""inputs"": {
-                        ""population"": 5,
-                        ""metallicElements"": 1,
-                        ""timber"": 5,
-                        ""metallicAlloys"": 3
-                      },
-                      ""outputs"": {
-                        ""housing"": 1,
-                        ""housingWaste"": 1,
-                        ""population"": 5
-                      },
-                      ""Type"": ""transform""
+              {
+                ""Steps"": [
+                  {
+                    ""name"": ""electronics"",
+                    ""inputs"": {
+                      ""population"": 1,
+                      ""metallicElements"": 3,
+                      ""metallicAlloys"": 2
                     },
-                    {
-                      ""name"": ""electronics"",
-                      ""inputs"": {
-                        ""population"": 1,
-                        ""metallicElements"": 3,
-                        ""metallicAlloys"": 2
-                      },
-                      ""outputs"": {
-                        ""population"": 1,
-                        ""electronics"": 2,
-                        ""electronicsWaste"": 1
-                      },
-                      ""Type"": ""transform""
-                    }
-                  ],
-                  ""ExpectedUtility"": 14.2
-                },
-                {
-                  ""Steps"": [
-                    {
-                      ""name"": ""electronics"",
-                      ""inputs"": {
-                        ""population"": 1,
-                        ""metallicElements"": 3,
-                        ""metallicAlloys"": 2
-                      },
-                      ""outputs"": {
-                        ""population"": 1,
-                        ""electronics"": 2,
-                        ""electronicsWaste"": 1
-                      },
-                      ""Type"": ""transform""
+                    ""outputs"": {
+                      ""population"": 1,
+                      ""electronics"": 2,
+                      ""electronicsWaste"": 1
                     },
-                    {
-                      ""name"": ""alloys"",
-                      ""inputs"": {
-                        ""population"": 1,
-                        ""metallicElements"": 2
-                      },
-                      ""outputs"": {
-                        ""population"": 1,
-                        ""metallicAlloys"": 1,
-                        ""metallicAlloysWaste"": 1
-                      },
-                      ""Type"": ""transform""
-                    }
-                  ],
-                  ""ExpectedUtility"": 9.5
-                }
-              ]";
+                    ""Type"": ""transform""
+                  },
+                  {
+                    ""name"": ""alloys"",
+                    ""inputs"": {
+                      ""population"": 1,
+                      ""metallicElements"": 2
+                    },
+                    ""outputs"": {
+                      ""population"": 1,
+                      ""metallicAlloys"": 1,
+                      ""metallicAlloysWaste"": 1
+                    },
+                    ""Type"": ""transform""
+                  }
+                ],
+                ""ExpectedUtility"": 9.5
+              },
+              {
+                ""Steps"": [
+                  {
+                    ""name"": ""housing"",
+                    ""inputs"": {
+                      ""population"": 5,
+                      ""metallicElements"": 1,
+                      ""timber"": 5,
+                      ""metallicAlloys"": 3
+                    },
+                    ""outputs"": {
+                      ""housing"": 1,
+                      ""housingWaste"": 1,
+                      ""population"": 5
+                    },
+                    ""Type"": ""transform""
+                  },
+                  {
+                    ""name"": ""electronics"",
+                    ""inputs"": {
+                      ""population"": 1,
+                      ""metallicElements"": 3,
+                      ""metallicAlloys"": 2
+                    },
+                    ""outputs"": {
+                      ""population"": 1,
+                      ""electronics"": 2,
+                      ""electronicsWaste"": 1
+                    },
+                    ""Type"": ""transform""
+                  }
+                ],
+                ""ExpectedUtility"": 14.2
+              }
+            ]";
 
             IWriter writer = new Writer(fileSystemMock, envMock.Object);
             writer.WriteSchedules();
