@@ -14,7 +14,6 @@ namespace TradeGame.Test
 
         private TransformTemplate transformTemplate;
         private Country country;
-        
         private ScheduleGenerator generator;
 
         [TestInitialize]
@@ -90,6 +89,26 @@ namespace TradeGame.Test
         {
             generator.SetScale(transformTemplate, country);
             transformTemplate.Scale.Should().Be(1);
+        }
+
+        [TestMethod]
+        public void UpdateFrontier()
+        {
+            PriorityQueue<Node, double> frontier = new PriorityQueue<Node, double>(new ScheduleComparer());
+            frontier.Enqueue(new Node(), 7);
+            frontier.Enqueue(new Node(), 6);
+            frontier.Enqueue(new Node(), 5);
+            frontier.Enqueue(new Node(), 3);
+
+            generator.UpdateFrontier(frontier, new Node(), 4);
+
+            double expected = 7;
+            for (int i = 0; i < frontier.Count; i++)
+            {
+                frontier.TryDequeue(out Node node, out double utility);
+                utility.Should().Be(expected);
+                expected--;
+            }
         }
     }
 }

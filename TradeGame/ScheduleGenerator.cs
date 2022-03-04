@@ -52,7 +52,7 @@
             double initialExpectedUtility = calculator.CalculateExpectedUtility(new List<Action>(), selfInitialState, selfInitialState);
             frontier.Enqueue(startNode, initialExpectedUtility);
 
-            while(frontier.Count > 0)
+            while (frontier.Count > 0)
             {
                 Node currentNode = frontier.Dequeue();
                 if (currentNode.Depth >= depthBound)
@@ -66,7 +66,7 @@
                 }
                 else
                 {
-                    foreach(Node successor in GenerateSuccessors(currentNode))
+                    foreach (Node successor in GenerateSuccessors(currentNode))
                     {
                         double successorExpectedUtility = calculator.CalculateExpectedUtility(currentNode.Steps, selfInitialState, currentNode.State.Where(c => c.IsSelf).FirstOrDefault());
                         frontier.Enqueue(successor, successorExpectedUtility);
@@ -93,11 +93,13 @@
                 // maximize the number of resources in transform to limit state space
                 SetScale(grounded, self);
 
-                Node successor = new Node();
-                successor.Parent = currentNode;
-                // initially set successor state and schedule to be the same as that of current node
-                successor.State = currentNode.State;
-                successor.Steps = currentNode.Steps;
+                Node successor = new Node
+                {
+                    Parent = currentNode,
+                    // initially set successor state and schedule to be the same as that of current node
+                    State = currentNode.State,
+                    Steps = currentNode.Steps
+                };
 
                 // update successor state and schedule
                 successor.Steps.Add(grounded);
@@ -146,6 +148,46 @@
                 }
 
                 country.State[resource] += template.Outputs[resource] * template.Scale;
+            }
+        }
+
+        public void UpdateFrontier(PriorityQueue<Node, double> frontier, Node potentialSuccessor, double potentialSuccessorUtility)
+        {
+            if (frontier.Count < 10)
+            {
+                frontier.Enqueue(potentialSuccessor, potentialSuccessorUtility);
+                return;
+            }
+
+            // unfortunately, there does not seem to be a way to toggle dequeuing of both
+            // highest and lowest nodes for C# priority queues.
+            // because of this, we make a new priority queue with the default behavior of
+            // dequeuing the lowest value first (no custom comparer) and compare that utility
+            // to that of the potential successor.
+            Node node;
+            double utility;
+            PriorityQueue<Node, double> frontierCopy = new PriorityQueue<Node, double>();
+
+            for (int i = 0; i < frontier.Count; i++)
+            {
+                frontier.TryDequeue(out node, out utility);
+                frontierCopy.Enqueue(node, utility);
+            }
+
+            frontierCopy.TryDequeue(out node, out utility);
+            if (potentialSuccessorUtility > utility)
+            {
+                frontierCopy.Enqueue(potentialSuccessor, potentialSuccessorUtility);
+            }
+            else
+            {
+                frontierCopy.Enqueue(node, utility);
+            }
+
+            for (int i = 0; i < frontierCopy.Count; i++)
+            {
+                frontierCopy.TryDequeue(out node, out utility);
+                frontier.Enqueue(node, utility);
             }
         }
     }
