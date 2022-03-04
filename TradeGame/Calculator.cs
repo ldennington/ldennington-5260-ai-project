@@ -2,14 +2,19 @@
 {
     internal class Calculator : ICalculator
     {
+        private const double gamma = 0.5;
+        private const double x_0 = 0;
+        private const double k = 1;
+        private const double L = 1;
+        private const int C = -3;
+
         public double CalculateExpectedUtility(IList<Action> schedule, Country initial_country, Country ending_country)
         {
-            int costOfFailure = -3;
             double discountedReward = CalculateDiscountedReward(schedule, initial_country, ending_country);
             double probabilityOfAcceptance = CalculateProbabilityOfAcceptance(schedule, initial_country, ending_country);
 
             // round to 2 decimal places
-            return Math.Round(probabilityOfAcceptance * discountedReward + (1-probabilityOfAcceptance) * costOfFailure, 2);
+            return Math.Round(probabilityOfAcceptance * discountedReward + (1-probabilityOfAcceptance) * C, 2);
         }
 
         public void CalculateStateQuality(Country country)
@@ -52,7 +57,6 @@
 
         public double CalculateDiscountedReward(IList<Action> schedule, Country initial_country, Country ending_country)
         {
-            double gamma = 0.5;
             double undiscountedReward = CalculateUndiscountedReward(initial_country, ending_country);
 
             // round to 2 decimal places
@@ -61,9 +65,6 @@
 
         public double CalculateProbabilityOfAcceptance(IList<Action> schedule, Country initial_country, Country ending_country)
         {
-            int x_0 = 0;
-            int k = 1;
-            int L = 1;
             double x = CalculateDiscountedReward(schedule, initial_country, ending_country);
             double exponent = -k * (x - x_0);
 
