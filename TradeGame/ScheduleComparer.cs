@@ -2,13 +2,13 @@
 {
     class ScheduleComparer : IComparer<double>
     {
-        public int Compare(double scheduleAScore, double scheduleBScore)
+        public int Compare(double stateA, double stateB)
         {
-            if (scheduleAScore == scheduleBScore) // expected utilities are equal
+            if (stateA == stateB)
             {
                 return 0;
             }
-            else if (scheduleAScore > scheduleBScore) // make sure we dequeue higher expected utilities first
+            else if (stateA > stateB) // make sure we dequeue highest expected utilities first
             {
                 return -1;
             }
