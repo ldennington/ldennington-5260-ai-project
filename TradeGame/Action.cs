@@ -3,8 +3,8 @@ using System.Text.Json.Serialization;
 
 namespace TradeGame
 {
-    /* adapted from Katherine Studzinski's explanation of her solution
-    at https://piazza.com/class/kyz01i5gip25bn?cid=60_f1 */
+    /* The Action class was adapted from Katherine Studzinski's explanation
+       of her solution at https://piazza.com/class/kyz01i5gip25bn?cid=60_f1 */
 
     [JsonConverter(typeof(ActionConverter))]
     public abstract class Action
@@ -19,6 +19,7 @@ namespace TradeGame
     {
         public override Action Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
+            // only need to override write
             throw new NotImplementedException();
         }
 
