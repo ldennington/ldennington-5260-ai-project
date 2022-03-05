@@ -114,6 +114,42 @@ namespace TradeGame.Test
             country.Should().BeEquivalentTo(expected);
         }
 
+
+        [TestMethod]
+        public void ExecuteTransfer()
+        {
+            TransferTemplate transferTemplate = new TransferTemplate()
+            { 
+                TransferringCountry = "Erewhon",
+                ReceivingCountry = "Atlantis",
+                Resource = "metallicElements",
+                Amount = 5
+            };
+
+            IList<Country> countries = new List<Country>()
+            {
+                new Country() { Name = "Atlantis", State = new Dictionary<string, int>()
+                    {
+                        { "metallicElements",  10 },
+                    }
+                },
+                new Country() { Name = "Erewhon", State = new Dictionary<string, int>()
+                    {
+                        { "metallicElements", 15 },
+                    }
+                }
+            };
+
+            generator.ExecuteTransfer(transferTemplate, countries);
+
+            Country receiver = countries.Where(c => c.Name == "Atlantis").FirstOrDefault();
+            receiver.State["metallicElements"].Should().Be(15);
+
+            Country transferrer = countries.Where(c => c.Name == "Erewhon").FirstOrDefault();
+            transferrer.State["metallicElements"].Should().Be(10);
+
+        }
+
         [TestMethod]
         public void EnsureDeepCopyDoesNotModifyInitialState()
         {

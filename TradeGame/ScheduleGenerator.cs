@@ -102,6 +102,40 @@
                 successors.Add(successor);
             }
 
+            // execute transfers
+            foreach (Country country in currentNode.State)
+            {
+                foreach (string resource in country.State.Keys)
+                {
+                    // for now we only care about resources we need to make electronics
+                    // countries won't trade their electronics, they will want to keep them
+                    // population transfers are not allowed at this time
+                    if (resource.Equals("metallicElements", StringComparison.OrdinalIgnoreCase) ||
+                        resource.Equals("metallicAlloys", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (!country.IsSelf)
+                        {
+                            TransferTemplate transferTemplate = new TransferTemplate()
+                            {
+                                TransferringCountry = country.Name,
+                                ReceivingCountry = self.Name,
+                                Resource = resource,
+                                // for now just transfer half, maybe make this smarter later
+                                Amount = country.State[resource] / 2
+                            };
+
+                            Node successor = currentNode.DeepCopy();
+
+                            // update successor state and schedule
+                            successor.Schedule.Steps.Add(transferTemplate);
+                            ExecuteTransfer(transferTemplate, successor.State);
+
+                            successors.Add(successor);
+                        }
+                    }
+                }
+            }
+
             return successors;
         }
 
@@ -121,6 +155,15 @@
 
                 country.State[resource] += template.Outputs[resource];
             }
+        }
+
+        public void ExecuteTransfer(TransferTemplate transferTemplate, IList<Country> state)
+        {
+            Country receivingCountry = state.Where(c => c.Name == transferTemplate.ReceivingCountry).FirstOrDefault();
+            Country transferringCountry = state.Where(c => c.Name == transferTemplate.TransferringCountry).FirstOrDefault();
+
+            receivingCountry.State[transferTemplate.Resource] = receivingCountry.State[transferTemplate.Resource] += transferTemplate.Amount;
+            transferringCountry.State[transferTemplate.Resource] = transferringCountry.State[transferTemplate.Resource] -= transferTemplate.Amount;
         }
 
         public void UpdateFrontier(PriorityQueue<Node, double> frontier, Node potentialSuccessor, double potentialSuccessorUtility)

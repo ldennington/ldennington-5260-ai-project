@@ -6,8 +6,7 @@ namespace TradeGame
     {
         public string TransferringCountry { get; set; }
         public string ReceivingCountry { get; set; }
-        public Resource Resource { get; set; }
+        public string Resource { get; set; }
         public int Amount { get; set; }
-        public string Type { get; } = "transfer";
     }
 }
