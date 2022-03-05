@@ -57,10 +57,10 @@
                 Node currentNode = frontier.Dequeue();
                 if (currentNode.Depth >= depthBound)
                 {
-                    double currentExpectedUtility = calculator.CalculateExpectedUtility(currentNode.Steps, selfInitialState, currentNode.State.Where(c => c.IsSelf).FirstOrDefault());
+                    double currentExpectedUtility = calculator.CalculateExpectedUtility(currentNode.Schedule.Steps, selfInitialState, currentNode.State.Where(c => c.IsSelf).FirstOrDefault());
                     Global.Schedules.Enqueue(new Schedule()
                     {
-                        Steps = currentNode.Steps,
+                        Steps = currentNode.Schedule.Steps,
                         ExpectedUtility = currentExpectedUtility
                     }, currentExpectedUtility);
                 }
@@ -68,8 +68,8 @@
                 {
                     foreach (Node successor in GenerateSuccessors(currentNode))
                     {
-                        double successorExpectedUtility = calculator.CalculateExpectedUtility(currentNode.Steps, selfInitialState, currentNode.State.Where(c => c.IsSelf).FirstOrDefault());
-                        frontier.Enqueue(successor, successorExpectedUtility);
+                        double successorExpectedUtility = calculator.CalculateExpectedUtility(currentNode.Schedule.Steps, selfInitialState, currentNode.State.Where(c => c.IsSelf).FirstOrDefault());
+                        UpdateFrontier(frontier, successor, successorExpectedUtility);
                     }
                 }
             }
@@ -78,12 +78,12 @@
         // operator rules of thumb?
         // satisfying pre-conditions?
         // consider adding knowledge
-        public IList<Node> GenerateSuccessors(Node currentNode)
+        public IList<Node> GenerateSuccessors(Node initialNode)
         {
             IList<Node> successors = new List<Node>();
 
             // ensure all transactions involve self to limit state space
-            Country self = currentNode.State.Where(c => c.IsSelf).FirstOrDefault();
+            Country self = initialNode.State.Where(c => c.IsSelf).FirstOrDefault();
 
             // iterate over transform templates
             foreach (TransformTemplate template in Global.TransformTemplates)
@@ -93,16 +93,10 @@
                 // maximize the number of resources in transform to limit state space
                 SetScale(grounded, self);
 
-                Node successor = new Node
-                {
-                    Parent = currentNode,
-                    // initially set successor state and schedule to be the same as that of current node
-                    State = currentNode.State,
-                    Steps = currentNode.Steps
-                };
+                Node successor = initialNode.DeepCopy();
 
                 // update successor state and schedule
-                successor.Steps.Add(grounded);
+                successor.Schedule.Steps.Add(grounded);
                 ExecuteTransform(grounded, successor.State.Where(c => c.IsSelf).FirstOrDefault());
 
                 successors.Add(successor);
