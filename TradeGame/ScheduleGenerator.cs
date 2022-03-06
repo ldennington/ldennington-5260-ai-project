@@ -68,7 +68,7 @@
                 {
                     foreach (Node successor in GenerateSuccessors(currentNode))
                     {
-                        double successorExpectedUtility = calculator.CalculateExpectedUtility(currentNode.Schedule.Steps, selfInitialState, currentNode.State.Where(c => c.IsSelf).FirstOrDefault());
+                        double successorExpectedUtility = calculator.CalculateExpectedUtility(successor.Schedule.Steps, selfInitialState, successor.State.Where(c => c.IsSelf).FirstOrDefault());
                         UpdateFrontier(frontier, successor, successorExpectedUtility);
                     }
                 }
@@ -78,12 +78,12 @@
         // operator rules of thumb?
         // satisfying pre-conditions?
         // consider adding knowledge
-        public IList<Node> GenerateSuccessors(Node initialNode)
+        public IList<Node> GenerateSuccessors(Node currentNode)
         {
             IList<Node> successors = new List<Node>();
 
             // ensure all transactions involve self to limit state space
-            Country self = initialNode.State.Where(c => c.IsSelf).FirstOrDefault();
+            Country self = currentNode.State.Where(c => c.IsSelf).FirstOrDefault();
 
             // iterate over transform templates
             foreach (TransformTemplate template in Global.TransformTemplates)
@@ -91,9 +91,9 @@
                 TransformTemplate grounded = template.DeepCopy();
                 grounded.Country = self.Name;
                 // maximize the number of resources in transform to limit state space
-                SetScale(grounded, self);
+                grounded.SetScale(self);
 
-                Node successor = initialNode.DeepCopy();
+                Node successor = currentNode.DeepCopy();
 
                 // update successor state and schedule
                 successor.Schedule.Steps.Add(grounded);
@@ -105,34 +105,11 @@
             return successors;
         }
 
-        /* The SetScale method helps satisfy preconditions and was adapted from
-           Jeff Baranski's explanation of his solution at
-           https://piazza.com/class/kyz01i5gip25bn?cid=60_f2 */
-        public void SetScale(TransformTemplate template, Country country)
-        {
-            int[] maxes = new int[template.Inputs.Count];
-            int i = 0;
-            foreach (string resource in template.Inputs.Keys)
-            {
-                if (!country.State.Keys.Contains(resource))
-                {
-                    maxes[i] = 0;
-                }
-                else
-                {
-                    maxes[i] = country.State[resource] / template.Inputs[resource];
-                }
-                i++;
-            }
-
-            template.Scale = maxes.Min();
-        }
-
         public void ExecuteTransform(TransformTemplate template, Country country)
         {
             foreach (string resource in template.Inputs.Keys)
             {
-                country.State[resource] -= template.Inputs[resource] * template.Scale;
+                country.State[resource] -= template.Inputs[resource];
             }
 
             foreach (string resource in template.Outputs.Keys)
@@ -142,7 +119,7 @@
                     country.State.Add(resource, 0);
                 }
 
-                country.State[resource] += template.Outputs[resource] * template.Scale;
+                country.State[resource] += template.Outputs[resource];
             }
         }
 

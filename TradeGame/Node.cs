@@ -18,17 +18,33 @@
 
         public Node DeepCopy()
         {
-            Node copy = new Node()
+            Node nodeCopy = new Node()
             {
                 Parent = this
             };
 
+            // ensure we make a copy of every non-primitive property
             IList<Country> state = new List<Country>();
             foreach (Country country in State)
             {
-                state.Add(country);
+                Country countryCopy = new Country()
+                {
+                    Name = country.Name,
+                    IsSelf = country.IsSelf,
+                    State = new Dictionary<string, int>(),
+                    // reset state quality for correct comparison in Calculator
+                    StateQuality = 0.0,
+                };
+
+                foreach (KeyValuePair<string, int> resourceAndAmount in country.State)
+                {
+                    countryCopy.State.Add(resourceAndAmount);
+                }
+
+                state.Add(countryCopy);
             }
-            copy.State = state;
+
+            nodeCopy.State = state;
 
             Schedule schedule = new Schedule();
             foreach (Action action in Schedule.Steps)
@@ -36,9 +52,9 @@
                 schedule.Steps.Add(action);
             }
             schedule.ExpectedUtility = Schedule.ExpectedUtility;
-            copy.Schedule = schedule;
+            nodeCopy.Schedule = schedule;
 
-            return copy;
+            return nodeCopy;
         }
     }
 }
