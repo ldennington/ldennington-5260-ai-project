@@ -8,10 +8,10 @@
         private const double L = 1;
         private const int C = -3;
 
-        public double CalculateExpectedUtility(IList<Action> schedule, Country initial_country, Country ending_country)
+        public double CalculateExpectedUtility(IList<Action> schedule, Country initialState, Country endingState)
         {
-            double discountedReward = CalculateDiscountedReward(schedule, initial_country, ending_country);
-            double probabilityOfAcceptance = CalculateProbabilityOfAcceptance(schedule, initial_country, ending_country);
+            double discountedReward = CalculateDiscountedReward(schedule, initialState, endingState);
+            double probabilityOfAcceptance = CalculateProbabilityOfAcceptance(schedule, initialState, endingState);
 
             // round to 2 decimal places
             return Math.Round(probabilityOfAcceptance * discountedReward + (1-probabilityOfAcceptance) * C, 2);
@@ -26,7 +26,14 @@
         {
             foreach(Country country in world)
             {
-                double stateQuality = 0;
+                double stateQuality = 0.00;
+
+                // without population we can't normalize, so state quality is 0
+                if (country.State["population"] == 0)
+                {
+                    country.StateQuality = stateQuality;
+                    return;
+                }
 
                 // we don't count population in our score since we use it to normalize
                 foreach (string item in country.State.Keys
@@ -44,28 +51,34 @@
             }
         }
 
-        public double CalculateUndiscountedReward(Country initial_country, Country ending_country)
+        public double CalculateUndiscountedReward(Country initialState, Country endingState)
         {
-            // 0.0 is default value of double in C#
-            if (initial_country.StateQuality == 0.0 || ending_country.StateQuality == 0.0)
+            // 0.0 is default value of a double in C#
+            if (initialState.StateQuality == 0.0)
             {
-                CalculateStateQuality(new List<Country>() { initial_country, ending_country });
+                CalculateStateQuality(initialState);
             }
+
+            if (endingState.StateQuality == 0.0)
+            {
+                CalculateStateQuality(endingState);
+            }
+
             // round to 2 decimal places
-            return Math.Round(ending_country.StateQuality - initial_country.StateQuality, 2);
+            return Math.Round(endingState.StateQuality - initialState.StateQuality, 2);
         }
 
-        public double CalculateDiscountedReward(IList<Action> schedule, Country initial_country, Country ending_country)
+        public double CalculateDiscountedReward(IList<Action> schedule, Country initialState, Country endingState)
         {
-            double undiscountedReward = CalculateUndiscountedReward(initial_country, ending_country);
+            double undiscountedReward = CalculateUndiscountedReward(initialState, endingState);
 
             // round to 2 decimal places
             return Math.Round(Math.Pow(gamma, schedule.Count) * undiscountedReward, 2);
         }
 
-        public double CalculateProbabilityOfAcceptance(IList<Action> schedule, Country initial_country, Country ending_country)
+        public double CalculateProbabilityOfAcceptance(IList<Action> schedule, Country initialState, Country endingState)
         {
-            double x = CalculateDiscountedReward(schedule, initial_country, ending_country);
+            double x = CalculateDiscountedReward(schedule, initialState, endingState);
             double exponent = -k * (x - x_0);
 
             // round to 2 decimal places

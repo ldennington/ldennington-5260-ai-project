@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TradeGame.Test
 {
@@ -15,6 +16,7 @@ namespace TradeGame.Test
         private TransformTemplate transformTemplate;
         private Country country;
         private ScheduleGenerator generator;
+        private Node initialNode;
 
         [TestInitialize]
         public void Initialize()
@@ -48,6 +50,34 @@ namespace TradeGame.Test
                     { "metallicAlloys", 3 },
                     { "electronics", 0 },
                     { "housing", 0 }
+                }
+            };
+
+            initialNode = new Node()
+            {
+                State = new List<Country>()
+                {
+                    new Country() { Name = "Atlantis", State = new Dictionary<string, int>()
+                        {
+                            { "population",  100 },
+                            { "metallicElements",  700 },
+                            { "timber",  2000 },
+                            { "metallicAlloys", 9 },
+                            { "housing", 0 },
+                            { "housingWaste", 0 },
+                        },
+                        IsSelf = true
+                    },
+                    new Country() { Name = "Brobdingnag", State = new Dictionary<string, int>()
+                        {
+                            { "population", 50 },
+                            { "metallicElements", 300 },
+                            { "timber", 1200 },
+                            { "metallicAlloys", 3 },
+                            { "electronics", 0 },
+                            { "housing", 0 }
+                        }
+                    },
                 }
             };
 
@@ -85,30 +115,28 @@ namespace TradeGame.Test
         }
 
         [TestMethod]
-        public void SetScale()
+        public void EnsureDeepCopyDoesNotModifyInitialState()
         {
-            generator.SetScale(transformTemplate, country);
-            transformTemplate.Scale.Should().Be(1);
-        }
+            Node copy = initialNode.DeepCopy();
 
-        [TestMethod]
-        public void UpdateFrontier()
-        {
-            PriorityQueue<Node, double> frontier = new PriorityQueue<Node, double>(new ScheduleComparer());
-            frontier.Enqueue(new Node(), 7);
-            frontier.Enqueue(new Node(), 6);
-            frontier.Enqueue(new Node(), 5);
-            frontier.Enqueue(new Node(), 3);
+            Country initialSelf = initialNode.State.Where(c => c.IsSelf).FirstOrDefault();
+            Country copySelf = copy.State.Where(c => c.IsSelf).FirstOrDefault();
 
-            generator.UpdateFrontier(frontier, new Node(), 4);
+            generator.ExecuteTransform(transformTemplate, copySelf);
 
-            double expected = 7;
-            for (int i = 0; i < frontier.Count; i++)
-            {
-                frontier.TryDequeue(out Node node, out double utility);
-                utility.Should().Be(expected);
-                expected--;
-            }
+            copySelf.State["population"].Should().Be(100);
+            copySelf.State["metallicElements"].Should().Be(699);
+            copySelf.State["timber"].Should().Be(1995);
+            copySelf.State["metallicAlloys"].Should().Be(6);
+            copySelf.State["housing"].Should().Be(1);
+            copySelf.State["housingWaste"].Should().Be(1);
+
+            initialSelf.State["population"].Should().Be(100);
+            initialSelf.State["metallicElements"].Should().Be(700);
+            initialSelf.State["timber"].Should().Be(2000);
+            initialSelf.State["metallicAlloys"].Should().Be(9);
+            initialSelf.State["housing"].Should().Be(0);
+            initialSelf.State["housingWaste"].Should().Be(0);
         }
     }
 }
