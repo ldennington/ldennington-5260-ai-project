@@ -19,7 +19,7 @@
             ReadFiles();
 
             // designate self
-            Country self = Global.InitialState.Where(x => x.Name.Equals("atlantis", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+            Country self = Global.InitialState.Where(x => x.Name.Equals("atlantis")).FirstOrDefault();
             self.IsSelf = true;
 
             // execute search
@@ -40,7 +40,7 @@
             reader.ReadCountries(Path.Combine(Directory.GetCurrentDirectory(), "InputFiles", "country-input.csv"));
         }
 
-        public void Search(Node startNode, int depthBound = 3)
+        public void Search(Node startNode, int depthBound = 10)
         {
             // C# priority queue defaults to dequeuing lowest scores first
             // override this with a custom comparer to dequeue highest scores first
@@ -48,16 +48,14 @@
             PriorityQueue<Node, double> frontier = new PriorityQueue<Node, double>(customComparer);
 
             // add initial state to frontier
-            Country selfInitialState = startNode.State.Where(c => c.IsSelf).FirstOrDefault();
-            double initialExpectedUtility = calculator.CalculateExpectedUtility(new List<Action>(), selfInitialState, selfInitialState);
-            frontier.Enqueue(startNode, initialExpectedUtility);
+            frontier.Enqueue(startNode, 0.0);
 
             while (frontier.Count > 0)
             {
                 Node currentNode = frontier.Dequeue();
                 if (currentNode.Depth >= depthBound)
                 {
-                    double currentExpectedUtility = calculator.CalculateExpectedUtility(currentNode.Schedule.Steps, selfInitialState, currentNode.State.Where(c => c.IsSelf).FirstOrDefault());
+                    double currentExpectedUtility = calculator.CalculateExpectedUtility(currentNode.Schedule, startNode.State, currentNode.State);
                     Global.Schedules.Enqueue(new Schedule()
                     {
                         Steps = currentNode.Schedule.Steps,
@@ -68,16 +66,13 @@
                 {
                     foreach (Node successor in GenerateSuccessors(currentNode))
                     {
-                        double successorExpectedUtility = calculator.CalculateExpectedUtility(successor.Schedule.Steps, selfInitialState, successor.State.Where(c => c.IsSelf).FirstOrDefault());
+                        double successorExpectedUtility = calculator.CalculateExpectedUtility(successor.Schedule, startNode.State, successor.State);
                         UpdateFrontier(frontier, successor, successorExpectedUtility);
                     }
                 }
             }
         }
 
-        // operator rules of thumb?
-        // satisfying pre-conditions?
-        // consider adding knowledge
         public IList<Node> GenerateSuccessors(Node currentNode)
         {
             IList<Node> successors = new List<Node>();
@@ -91,6 +86,7 @@
                 TransformTemplate grounded = template.DeepCopy();
                 grounded.Country = self.Name;
                 // maximize the number of resources in transform to limit state space
+                // also ensures we won't exceed number of resources required for a given transform
                 grounded.SetScale(self);
 
                 Node successor = currentNode.DeepCopy();
@@ -107,11 +103,10 @@
             {
                 foreach (string resource in country.State.Keys)
                 {
-                    // for now we only care about resources we need to make electronics
-                    // countries won't trade their electronics, they will want to keep them
-                    // population transfers are not allowed at this time
-                    if (resource.Equals("metallicElements", StringComparison.OrdinalIgnoreCase) ||
-                        resource.Equals("metallicAlloys", StringComparison.OrdinalIgnoreCase))
+                    // population and land cannot be transferred at this time
+                    if (!resource.Equals("population") && 
+                        !resource.Equals("availableLand") &&
+                        !resource.Equals("farm"))
                     {
                         if (!country.IsSelf)
                         {
@@ -120,7 +115,8 @@
                                 TransferringCountry = country.Name,
                                 ReceivingCountry = self.Name,
                                 Resource = resource,
-                                // for now just transfer half, maybe make this smarter later
+                                // for now just transfer half
+                                // potentially improve in part 2
                                 Amount = country.State[resource] / 2
                             };
 

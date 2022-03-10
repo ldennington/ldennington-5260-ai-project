@@ -37,5 +37,31 @@
       "electronicsWaste": "1",
       "population": "1"
     }
+  },
+  {
+    "name": "farm",
+    "inputs": {
+      "population": "3",
+      "water": "5",
+      "availableLand": "2"
+    },
+    "outputs": {
+      "population": "3",
+      "farmWaste": "1",
+      "farm": "1"
+    }
+  },
+  {
+    "name": "food",
+    "inputs": {
+      "population": "1",
+      "water": "2",
+      "farm": "1"
+    },
+    "outputs": {
+      "population": "1",
+      "foodWaste": "1",
+      "food": "2"
+    }
   }
 ]

@@ -2,16 +2,18 @@
 {
     public interface ICalculator
     {
-         double CalculateExpectedUtility(IList<Action> schedule, Country initial_country, Country ending_country);
+        double CalculateExpectedUtility(Schedule schedule, IList<Country> worldInitialState, IList<Country> worldEndingState);
 
-         void CalculateStateQuality(Country country);
+        void CalculateStateQuality(Country country);
 
-         void CalculateStateQuality(IList<Country> world);
+        double WeightResource(Country country, string resource);
 
-         double CalculateUndiscountedReward(Country initial_country, Country ending_country);
+        double CalculateUndiscountedReward(Country initialCountry, Country endingCountry);
 
-         double CalculateDiscountedReward(IList<Action> schedule, Country initial_country, Country ending_country);
+        double CalculateDiscountedReward(Schedule schedule, Country initialCountry, Country endingCountry);
 
-         double CalculateProbabilityOfAcceptance(IList<Action> schedule, Country initial_country, Country ending_country);
+        double CalculateProbabilityOfAcceptance(Schedule schedule, IList<Country> worldInitialState, IList<Country> worldEndingState);
+
+        HashSet<string> GetParticipatingCountries(Schedule schedule);
     }
 }

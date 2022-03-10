@@ -1,6 +1,6 @@
-﻿Country,population,metallicElements,timber,metallicAlloys,metallicAlloysWaste,electronics,electronicsWaste,housing,housingWaste
-atlantis,100,700,2000,400,0,0,0,50,0
-brobdingnag,50,300,1200,220,0,0,0,25,0
-carpania,25,100,300,350,0,0,0,18,0
-dinotopia,30,200,200,280,0,0,0,15,0
-erewhon,70,500,1700,190,0,0,0,35,0
+﻿country,population,metallicElements,timber,metallicAlloys,metallicAlloysWaste,electronics,electronicsWaste,housing,housingWaste,availableLand,water,farm,farmWaste,food,foodWaste
+atlantis,100,700,2000,400,300,30,12,50,30,200,800,10,10,300,150
+brobdingnag,50,300,1200,220,100,20,5,25,15,300,200,4,4,125,63
+carpania,25,100,300,350,60,15,8,18,19,100,150,3,3,100,50
+dinotopia,30,200,200,280,80,40,45,15,10,150,550,3,3,120,60
+erewhon,70,500,1700,190,500,10,0,35,30,75,600,8,8,180,90
