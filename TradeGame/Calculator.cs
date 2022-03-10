@@ -2,53 +2,111 @@
 {
     internal class Calculator : ICalculator
     {
-        private const double gamma = 0.5;
+        private const double gamma = 0.7;
         private const double x_0 = 0;
         private const double k = 1;
         private const double L = 1;
         private const int C = -3;
 
-        public double CalculateExpectedUtility(IList<Action> schedule, Country initialState, Country endingState)
+        public double CalculateExpectedUtility(Schedule schedule, IList<Country> worldInitialState, IList<Country> worldEndingState)
         {
-            double discountedReward = CalculateDiscountedReward(schedule, initialState, endingState);
-            double probabilityOfAcceptance = CalculateProbabilityOfAcceptance(schedule, initialState, endingState);
+            Country selfInitialState = worldInitialState.Where(c => c.IsSelf).FirstOrDefault();
+            Country selfEndingState = worldEndingState.Where(c => c.IsSelf).FirstOrDefault();
+
+            double discountedReward = CalculateDiscountedReward(schedule, selfInitialState, selfEndingState);
+            double probabilityOfAcceptance = CalculateProbabilityOfAcceptance(schedule, worldInitialState, worldEndingState);
 
             // round to 2 decimal places
-            return Math.Round(probabilityOfAcceptance * discountedReward + (1-probabilityOfAcceptance) * C, 2);
+            return Math.Round(probabilityOfAcceptance * discountedReward + (1-probabilityOfAcceptance) * C, 4);
         }
 
+        /* State Quality Measure
+         * Ecological footprint definition: amount of productive land a population uses
+         * to sustain itself (including ridding itself of waste)
+         * Ecological footprint equation (extremely simplified for our purposes):
+         * 
+         *              WeightedFood + WeightedHousing + WeightedElectronics + WeightedWastes
+         *          -------------------------------------------------------------------------------
+         *                                  WeightedAvailableland
+         * 
+         * A country should have a minimum of the following per person for quality of life:
+         *      * 3 units of food
+         *      * 0.5 units of housing
+         *      * 1 unit of electronics
+         * If a country does not meet this bar, it is penalized with 1 point added to its
+         * ecological footprint
+         * 
+         * Once this bar is met, countries should try to minimize their ecological footprint
+         * 
+         * Given the time constraints for Part 1, food, farm, and renewable energy have not
+         * been accounted for at this time. However, there is potential for that in Part 2.
+         * 
+         * Definition and background on ecological footprint:
+         *      https://www.footprintnetwork.org/content/documents/EF2006technotes2.pdf
+         *      https://www.treehugger.com/what-is-ecological-footprint-4580244
+         */
         public void CalculateStateQuality(Country country)
         {
-            CalculateStateQuality(new List<Country> { country });
+            // note that in the current setup, population will never be 0 (since every country has
+            // population inputs, population transfers are not permitted, and transforms do not
+            // decrease population)
+            double population = 0.0;
+            double weightedFood = 0.0;
+            double weightedHousing = 0.0;
+            double weightedElectronics = 0.0;
+            double weightedAvailableLand = 0.0;
+            double weightedWaste = 0.0;
+            double ecologicalFootprint = 0.0;
+
+            foreach (Resource resource in Global.Resources.Values)
+            {
+                switch (resource.Name)
+                {
+                    case "population":
+                        population = country.State["population"];
+                        break;
+                    case "food":
+                        weightedFood = WeightResource(country, resource.Name);
+                        break;
+                    case "housing":
+                        weightedHousing = WeightResource(country, resource.Name);
+                        break;
+                    case "electronics":
+                        weightedElectronics = WeightResource(country, resource.Name);
+                        break;
+                    case "availableLand":
+                        weightedAvailableLand = WeightResource(country, resource.Name);
+                        break;
+                    case "foodWaste":
+                    case "farmWaste":
+                    case "housingWaste":
+                    case "electronicsWaste":
+                    case "metallicAlloysWaste":
+                        weightedWaste += WeightResource(country, resource.Name);
+                        break;
+                }
+            }
+
+            double foodPerPerson = country.State["food"] / population;
+            double housingPerPerson = country.State["housing"] / population;
+            double electronicsPerPerson = country.State["electronics"] / population;
+
+            if (foodPerPerson < 3 || housingPerPerson < 0.5 || electronicsPerPerson < 1.0)
+            {
+                ecologicalFootprint += 1.0;
+            }
+
+            ecologicalFootprint += (weightedFood + weightedHousing + weightedElectronics + weightedWaste) / weightedAvailableLand;
+
+            // round to 2 decimal places
+            // use the inverse to correctly reward for lower ecological footprints
+            country.StateQuality = Math.Round(1/ecologicalFootprint, 4);
         }
 
-        public void CalculateStateQuality(IList<Country> world)
+        public double WeightResource(Country country, string resource)
         {
-            foreach(Country country in world)
-            {
-                double stateQuality = 0.00;
-
-                // without population we can't normalize, so state quality is 0
-                if (country.State["population"] == 0)
-                {
-                    country.StateQuality = stateQuality;
-                    return;
-                }
-
-                // we don't count population in our score since we use it to normalize
-                foreach (string item in country.State.Keys
-                    .Where(k => !k.Equals("population", StringComparison.OrdinalIgnoreCase)))
-                {
-                    // find the resource in the Global Dictionary
-                    Resource resource = Global.Resources.Where(r => r.Key
-                        .Equals(item, StringComparison.OrdinalIgnoreCase)).FirstOrDefault().Value;
-                    // resource amount * weight / population
-                    stateQuality += country.State[item] * resource.Weight / country.State["population"];
-                }
-
-                // round to 2 decimal places
-                country.StateQuality = Math.Round(stateQuality, 2);
-            }
+            return country.State[resource] *
+                        Global.Resources.Where(r => r.Key.Equals(resource)).FirstOrDefault().Value.Weight;
         }
 
         public double CalculateUndiscountedReward(Country initialState, Country endingState)
@@ -65,24 +123,64 @@
             }
 
             // round to 2 decimal places
-            return Math.Round(endingState.StateQuality - initialState.StateQuality, 2);
+            return Math.Round(endingState.StateQuality - initialState.StateQuality, 4);
         }
 
-        public double CalculateDiscountedReward(IList<Action> schedule, Country initialState, Country endingState)
+        public double CalculateDiscountedReward(Schedule schedule, Country initialState, Country endingState)
         {
             double undiscountedReward = CalculateUndiscountedReward(initialState, endingState);
 
             // round to 2 decimal places
-            return Math.Round(Math.Pow(gamma, schedule.Count) * undiscountedReward, 2);
+            return Math.Round(Math.Pow(gamma, schedule.Steps.Count) * undiscountedReward, 4);
         }
 
-        public double CalculateProbabilityOfAcceptance(IList<Action> schedule, Country initialState, Country endingState)
+        public double CalculateProbabilityOfAcceptance(Schedule schedule, IList<Country> worldInitialState, IList<Country> worldEndingState)
         {
-            double x = CalculateDiscountedReward(schedule, initialState, endingState);
-            double exponent = -k * (x - x_0);
+            HashSet<string> participatingCountries = GetParticipatingCountries(schedule);
+            List<double> countryProbabilitiesOfAcceptance = new List<double>();
+            double overallProbabilityOfAcceptance = 1.0;
+
+            foreach (string country in participatingCountries)
+            {
+                Country countryInitialState = worldInitialState.Where(c => c.Name.Equals(country, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                Country countryEndingState = worldEndingState.Where(c => c.Name.Equals(country, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+
+                double discountedReward = CalculateDiscountedReward(schedule, countryInitialState, countryEndingState);
+                double exponent = -k * (discountedReward - x_0);
+
+                countryProbabilitiesOfAcceptance.Add(L / (1 + Math.Pow(Math.E, exponent)));
+            }
+
+            foreach (double probability in countryProbabilitiesOfAcceptance)
+            {
+                overallProbabilityOfAcceptance *= probability;
+            }
 
             // round to 2 decimal places
-            return Math.Round(L / (1 + Math.Pow(Math.E, exponent)), 2);
+            return Math.Round(overallProbabilityOfAcceptance, 4);
+        }
+
+        public HashSet<string> GetParticipatingCountries(Schedule schedule)
+        {
+            HashSet<string> participatingCountries = new HashSet<string>();
+
+            foreach (Action action in schedule.Steps)
+            {
+                switch (action.GetType().Name)
+                {
+                    case "TransformTemplate":
+                        TransformTemplate transformTemplate = (TransformTemplate)action;
+                        participatingCountries.Add(transformTemplate.Country);
+                        break;
+                    case "TransferTemplate":
+                        TransferTemplate transferTemplate = (TransferTemplate)action;
+                        participatingCountries.Add(transferTemplate.TransferringCountry);
+                        participatingCountries.Add(transferTemplate.ReceivingCountry);
+                        break;
+                }
+            }
+
+            return participatingCountries;
         }
     }
 }

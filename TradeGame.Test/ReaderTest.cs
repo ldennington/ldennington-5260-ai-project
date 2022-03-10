@@ -19,7 +19,7 @@ namespace TradeGame.Test
         [TestInitialize]
         public void Initialize()
         {
-            resourceInput = string.Concat("Resource,Weight,Notes\n",
+            resourceInput = string.Concat("resource,weight,notes\n",
                                         "R1,0,analog to population\n",
                                         "R2,0,analog to metallic elements\n",
                                         "R3,0,analog to timber\n",
@@ -30,7 +30,7 @@ namespace TradeGame.Test
                                         "R22',0.8,waste\n",
                                         "R23',0.4,waste");
 
-            countryInput = string.Concat(string.Concat("Country,R1,R2,R3,R21,R22,R23\n",
+            countryInput = string.Concat(string.Concat("country,R1,R2,R3,R21,R22,R23\n",
                                         "Atlantis,100,700,2000,0,0,0\n",
                                         "Brobdingnag,50,300,1200,0,0,0\n",
                                         "Carpania,25,100,300,0,0,0\n",

@@ -1,10 +1,16 @@
-﻿Resource,Weight,Notes
-population,0,
-metallicElements,0.8,
-timber,0.5,
-metallicAlloys,0.7,
-metallicAlloysWaste,0.3,
-electronics,0.9,
-electronicsWaste,0.4,
-housing,0.6,
-housingWaste,0.2,
+﻿resource,weight,notes
+population,0,"Doesn't factor directly into State Quality, no weight"
+metallicElements,0,"Doesn't factor directly into State Quality, no weight"
+timber,0,"Doesn't factor directly into State Quality, no weight"
+metallicAlloys,0,"Doesn't factor directly into State Quality, no weight"
+metallicAlloysWaste,0.3,All waste weighted at 0.3
+electronics,0.5,Resources consumed by population and accounted for in State Quality weighted at 0.5
+electronicsWaste,0.3,All waste weighted at 0.3
+housing,0.5,Resources consumed by population and accounted for in State Quality weighted at 0.5
+housingWaste,0.5,All waste weighted at 0.3
+availableLand,1,Used to standardize
+water,0,"Doesn't factor directly into State Quality, no weight"
+farm,0,"Doesn't factor directly into State Quality, no weight"
+farmWaste,0.3,All waste weighted at 0.3
+food,0.5,Resources consumed by population and accounted for in State Quality weighted at 0.5
+foodWaste,0.3,All waste weighted at 0.3
