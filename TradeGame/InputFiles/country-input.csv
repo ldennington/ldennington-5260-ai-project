@@ -1,6 +1,6 @@
 ﻿country,population,metallicElements,timber,metallicAlloys,metallicAlloysWaste,electronics,electronicsWaste,housing,housingWaste,availableLand,water,farm,farmWaste,food,foodWaste
-atlantis,100,700,2000,400,300,30,12,50,30,200,800,10,10,300,150
-brobdingnag,50,300,1200,220,100,20,5,25,15,300,200,4,4,125,63
-carpania,25,100,300,350,60,15,8,18,19,100,150,3,3,100,50
-dinotopia,30,200,200,280,80,40,45,15,10,150,550,3,3,120,60
-erewhon,70,500,1700,190,500,10,0,35,30,75,600,8,8,180,90
+gaia,100,120,50,100,100,30,30,50,50,200,300,10,10,300,150
+houtu,50,300,1200,220,100,20,5,25,15,300,200,4,4,125,63
+mat zemlya,25,100,300,350,175,15,8,18,18,100,150,3,3,65,65
+pachamama,30,200,200,280,80,40,45,15,10,150,550,3,3,120,60
+sif,70,500,1700,190,500,10,0,35,30,75,600,8,8,180,90

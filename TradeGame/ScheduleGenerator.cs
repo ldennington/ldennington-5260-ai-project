@@ -19,7 +19,7 @@
             ReadFiles();
 
             // designate self
-            Country self = Global.InitialState.Where(x => x.Name.Equals("atlantis")).FirstOrDefault();
+            Country self = Global.InitialState.Where(x => x.Name.Equals("gaia")).FirstOrDefault();
             self.IsSelf = true;
 
             // execute search
