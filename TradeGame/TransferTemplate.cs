@@ -8,5 +8,14 @@ namespace TradeGame
         public string ReceivingCountry { get; set; }
         public string Resource { get; set; }
         public int Amount { get; set; }
+
+        public void Execute(IList<Country> state)
+        {
+            Country receivingCountry = state.Where(c => c.Name == ReceivingCountry).FirstOrDefault();
+            Country transferringCountry = state.Where(c => c.Name == TransferringCountry).FirstOrDefault();
+
+            receivingCountry.State[Resource] = receivingCountry.State[Resource] += Amount;
+            transferringCountry.State[Resource] = transferringCountry.State[Resource] -= Amount;
+        }
     }
 }

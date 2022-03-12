@@ -36,7 +36,11 @@ __Note:__ The below steps have only been validated on a Windows machine. Althoug
     ```cmd
     code .
     ```
+<<<<<<< Updated upstream
 0. The entry point for the program is the `Execute()` method in `ScheduleGenerator.cs` (called by `scheduleGenerator.Execute()` in `Program.cs` on startup).
+=======
+0. The entry point for the program is the `GameScheduler()` method in `ScheduleGenerator.cs` (called by `scheduleGenerator.GameScheduler()` in `Program.cs` on startup).
+>>>>>>> Stashed changes
 
 ### Running the code
 
@@ -75,4 +79,8 @@ __Note:__ The below steps have only been validated on a Windows machine. Althoug
     dotnet test
     ```
 
+<<<<<<< Updated upstream
 Note that the project contains a special [GitHub Actions workflow](.github/workflows/ci.yml) that runs `dotnet build` and `dotnet test` on every Pull Request and new commit in `main` to protect against regressions.
+=======
+Note that the project also contains a special [GitHub Actions workflow](.github/workflows/ci.yml) that runs `dotnet build` and `dotnet test` on every Pull Request and new commit in `main` to protect against regressions.
+>>>>>>> Stashed changes

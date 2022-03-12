@@ -83,5 +83,23 @@ namespace TradeGame
                 Outputs[resource] *= Scale;
             }
         }
+
+        public void Execute(Country country)
+        {
+            foreach (string resource in Inputs.Keys)
+            {
+                country.State[resource] -= Inputs[resource];
+            }
+
+            foreach (string resource in Outputs.Keys)
+            {
+                if (!country.State.Keys.Contains(resource))
+                {
+                    country.State.Add(resource, 0);
+                }
+
+                country.State[resource] += Outputs[resource];
+            }
+        }
     }
 }

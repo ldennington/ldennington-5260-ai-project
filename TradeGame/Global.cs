@@ -8,6 +8,6 @@
 
         public static IList<Country> InitialState = new List<Country>();
 
-        public static PriorityQueue<Schedule, double> Schedules = new PriorityQueue<Schedule, double>(new ScheduleComparer());
+        public static PriorityQueue<Schedule, double> Solutions = new PriorityQueue<Schedule, double>(new ScheduleComparer());
     }
 }

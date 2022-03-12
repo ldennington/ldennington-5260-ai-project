@@ -21,7 +21,7 @@ namespace TradeGame.Test
             envMock.Setup(e => e.Get("TEMP")).Returns(tempDirectory);
             fileSystemMock.Directory.CreateDirectory(tempDirectory);
 
-            Global.Schedules.Enqueue(new Schedule()
+            Global.Solutions.Enqueue(new Schedule()
             {
                 ExpectedUtility = 14.2,
                 Steps = new List<Action>() {
@@ -63,7 +63,7 @@ namespace TradeGame.Test
                 }
             }, 14.2);
 
-            Global.Schedules.Enqueue(new Schedule()
+            Global.Solutions.Enqueue(new Schedule()
             {
                 ExpectedUtility = 9.5,
                 Steps = new List<Action>() {
