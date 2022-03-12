@@ -20,7 +20,7 @@ namespace TradeGame
                 .BuildServiceProvider();
 
             var scheduleGenerator = serviceProvider.GetService<ScheduleGenerator>();
-            scheduleGenerator.Execute();
+            scheduleGenerator.GameScheduler();
         }
     }
 }

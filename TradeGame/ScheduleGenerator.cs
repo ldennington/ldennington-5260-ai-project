@@ -13,7 +13,7 @@
             this.calculator = calculator;
         }
 
-        public void Execute()
+        public void GameScheduler()
         {
             // read input
             ReadFiles();
@@ -40,7 +40,7 @@
             reader.ReadCountries(Path.Combine(Directory.GetCurrentDirectory(), "InputFiles", "country-input.csv"));
         }
 
-        public void Search(Node startNode, int depthBound = 10)
+        public void Search(Node startNode, int depthBound = 3)
         {
             // C# priority queue defaults to dequeuing lowest scores first
             // override this with a custom comparer to dequeue highest scores first
@@ -56,7 +56,7 @@
                 if (currentNode.Depth >= depthBound)
                 {
                     double currentExpectedUtility = calculator.CalculateExpectedUtility(currentNode.Schedule, startNode.State, currentNode.State);
-                    Global.Schedules.Enqueue(new Schedule()
+                    Global.Solutions.Enqueue(new Schedule()
                     {
                         Steps = currentNode.Schedule.Steps,
                         ExpectedUtility = currentExpectedUtility
@@ -67,7 +67,8 @@
                     foreach (Node successor in GenerateSuccessors(currentNode))
                     {
                         double successorExpectedUtility = calculator.CalculateExpectedUtility(successor.Schedule, startNode.State, successor.State);
-                        UpdateFrontier(frontier, successor, successorExpectedUtility);
+                        frontier.Enqueue(successor, successorExpectedUtility);
+                        //UpdateFrontier(frontier, successor, successorExpectedUtility);
                     }
                 }
             }
@@ -76,95 +77,116 @@
         public IList<Node> GenerateSuccessors(Node currentNode)
         {
             IList<Node> successors = new List<Node>();
-
-            // ensure all transactions involve self to limit state space
             Country self = currentNode.State.Where(c => c.IsSelf).FirstOrDefault();
+            ExecuteTransfersAndTransforms(currentNode, self, successors);
+            return successors;
+        }
 
-            // iterate over transform templates
+        public void ExecuteTransfersAndTransforms(Node currentNode, Country self, IList<Node> successors)
+        {
             foreach (TransformTemplate template in Global.TransformTemplates)
             {
-                TransformTemplate grounded = template.DeepCopy();
-                grounded.Country = self.Name;
-                // maximize the number of resources in transform to limit state space
-                // also ensures we won't exceed number of resources required for a given transform
-                grounded.SetScale(self);
-
-                Node successor = currentNode.DeepCopy();
-
-                // update successor state and schedule
-                successor.Schedule.Steps.Add(grounded);
-                ExecuteTransform(grounded, successor.State.Where(c => c.IsSelf).FirstOrDefault());
-
-                successors.Add(successor);
+                Node successor = ExecuteTransform(currentNode, self, template);
+                if (successor != null)
+                {
+                    successors.Add(ExecuteTransform(currentNode, self, template));
+                }
             }
 
-            // execute transfers
-            foreach (Country country in currentNode.State)
+            // Transfer Sequence:
+            // 1. A country transfers resources to self.
+            // 2. Self uses those resources in a transform.
+            // 3. Self sends half of the transform outputs back to country from Step 1.
+            foreach (Country country in currentNode.State.Where(c => !c.IsSelf))
             {
                 foreach (string resource in country.State.Keys)
                 {
+                    Node successor = null;
                     // population and land cannot be transferred at this time
-                    if (!resource.Equals("population") && 
+                    if (!resource.Equals("population") &&
                         !resource.Equals("availableLand") &&
                         !resource.Equals("farm"))
                     {
-                        if (!country.IsSelf)
+                        successor = ExecuteTransfer(currentNode, country, self.Name, resource, successor: successor);
+                        IList<TransformTemplate> potentialTransforms = Global.TransformTemplates.Where(t => t.Inputs.Keys.Contains(resource)).ToList();
+
+                        // if we transferred a resource that can't be transformed, terminate
+                        if (potentialTransforms.Count > 0)
                         {
-                            TransferTemplate transferTemplate = new TransferTemplate()
+                            // if there's more than one transform template that uses this resource,
+                            // randomly select one template to use
+                            var random = new Random();
+                            TransformTemplate transformTemplate = potentialTransforms[random.Next(potentialTransforms.Count)];
+                            successor = ExecuteTransform(currentNode, self, transformTemplate, successor);
+
+                            // if transform was successful, send half the transformed resources back to the
+                            // original country
+                            Action previousStep = successor.Schedule.Steps.Last();
+                            if (previousStep is TransformTemplate)
                             {
-                                TransferringCountry = country.Name,
-                                ReceivingCountry = self.Name,
-                                Resource = resource,
-                                // for now just transfer half
-                                // potentially improve in part 2
-                                Amount = country.State[resource] / 2
-                            };
+                                TransformTemplate transform = (TransformTemplate)previousStep;
+                                KeyValuePair<string, int> resourceAndAmount = transform.Outputs.Where(r => !r.Key.Equals("population") && !r.Key.Contains("Waste")).FirstOrDefault();
+                                successor = ExecuteTransfer(currentNode, self, country.Name, resourceAndAmount.Key, resourceAndAmount.Value / 2, successor);
+                            }
 
-                            Node successor = currentNode.DeepCopy();
-
-                            // update successor state and schedule
-                            successor.Schedule.Steps.Add(transferTemplate);
-                            ExecuteTransfer(transferTemplate, successor.State);
-
+                            successors.Add(successor);
+                        }
+                        else
+                        {
                             successors.Add(successor);
                         }
                     }
                 }
             }
-
-            return successors;
         }
 
-        public void ExecuteTransform(TransformTemplate template, Country country)
+        public Node ExecuteTransform(Node currentNode, Country self, TransformTemplate template, Node successor = null)
         {
-            foreach (string resource in template.Inputs.Keys)
+            TransformTemplate grounded = template.DeepCopy();
+            // ensure all transactions involve self to limit state space
+            grounded.Country = self.Name;
+
+            // maximize the number of resources in transform to limit state space
+            // also ensures we won't exceed number of resources required for a given transform
+            grounded.SetScale(self);
+
+            if (grounded.Scale > 0)
             {
-                country.State[resource] -= template.Inputs[resource];
+                successor = successor == null ? currentNode.DeepCopy() : successor;
+
+                // update successor state and schedule
+                successor.Schedule.Steps.Add(grounded);
+                grounded.Execute(successor.State.Where(c => c.IsSelf).FirstOrDefault());
             }
 
-            foreach (string resource in template.Outputs.Keys)
-            {
-                if (!country.State.Keys.Contains(resource))
-                {
-                    country.State.Add(resource, 0);
-                }
-
-                country.State[resource] += template.Outputs[resource];
-            }
+            return successor;
         }
 
-        public void ExecuteTransfer(TransferTemplate transferTemplate, IList<Country> state)
+        public Node ExecuteTransfer(Node currentNode, Country transferringCountry, string receivingCountry,
+            string resource, int amount = 0, Node successor = null)
         {
-            Country receivingCountry = state.Where(c => c.Name == transferTemplate.ReceivingCountry).FirstOrDefault();
-            Country transferringCountry = state.Where(c => c.Name == transferTemplate.TransferringCountry).FirstOrDefault();
+            TransferTemplate transferTemplate = new TransferTemplate()
+            {
+                TransferringCountry = transferringCountry.Name,
+                ReceivingCountry = receivingCountry,
+                Resource = resource,
+                // for now just transfer half by default
+                // potentially improve in part 2
+                Amount = amount != 0 ? amount : transferringCountry.State[resource] / 2
+            };
 
-            receivingCountry.State[transferTemplate.Resource] = receivingCountry.State[transferTemplate.Resource] += transferTemplate.Amount;
-            transferringCountry.State[transferTemplate.Resource] = transferringCountry.State[transferTemplate.Resource] -= transferTemplate.Amount;
+            successor = successor == null ? currentNode.DeepCopy() : successor;
+
+            // update successor state and schedule
+            successor.Schedule.Steps.Add(transferTemplate);
+            transferTemplate.Execute(successor.State);
+
+            return successor;
         }
 
         public void UpdateFrontier(PriorityQueue<Node, double> frontier, Node potentialSuccessor, double potentialSuccessorUtility)
         {
-            if (frontier.Count < 10)
+            if (frontier.Count < 30)
             {
                 frontier.Enqueue(potentialSuccessor, potentialSuccessorUtility);
                 return;

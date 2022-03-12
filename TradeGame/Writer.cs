@@ -17,9 +17,9 @@ namespace TradeGame
         public void WriteSchedules()
         {
             IList<Schedule> schedules = new List<Schedule>();
-            while (Global.Schedules.Count > 0)
+            while (Global.Solutions.Count > 0)
             {
-                schedules.Add(Global.Schedules.Dequeue());
+                schedules.Add(Global.Solutions.Dequeue());
             }
 
             string outputFileName = "output-schedules.json";

@@ -18,8 +18,6 @@ namespace TradeGame
         at https://gist.github.com/jbaranski/209d475c21fe0459c2499ed606cfad9b */
         public void ReadResources(string path)
         {
-            IDictionary<string, Resource> resources = new Dictionary<string, Resource>();
-
             using var reader = new StreamReader(fileSystem.File.OpenRead(path));
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -41,8 +39,6 @@ namespace TradeGame
         at https://gist.github.com/jbaranski/209d475c21fe0459c2499ed606cfad9b */
         public void ReadCountries(string path)
         {
-            IList<Country> countries = new List<Country>();
-
             using var reader = new StreamReader(fileSystem.File.OpenRead(path));
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
