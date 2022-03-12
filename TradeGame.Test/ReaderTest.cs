@@ -19,10 +19,10 @@ namespace TradeGame.Test
         [TestInitialize]
         public void Initialize()
         {
-            resourceInput = string.Concat("resource,weight,notes\n",
+            resourceInput = string.Concat("Resource,Weight,Notes\n",
                                         "R1,0,analog to population\n",
                                         "R2,0,analog to metallic elements\n",
-                                        "R3,0,analog to timber\n",
+                                        "R3,0,analog to Timber\n",
                                         "R21,0.2,analog to metallic alloys\n",
                                         "R22,0.5,analog to electronics\n",
                                         "R23,0.8,analog to housing (and housing sufficiency)\n",
@@ -30,25 +30,25 @@ namespace TradeGame.Test
                                         "R22',0.8,waste\n",
                                         "R23',0.4,waste");
 
-            countryInput = string.Concat(string.Concat("country,R1,R2,R3,R21,R22,R23\n",
-                                        "Atlantis,100,700,2000,0,0,0\n",
-                                        "Brobdingnag,50,300,1200,0,0,0\n",
-                                        "Carpania,25,100,300,0,0,0\n",
-                                        "Dinotopia,30,200,200,0,0,0\n",
-                                        "Erewhon,70,500,1700,0,0,0"));
+            countryInput = string.Concat(string.Concat("Country,R1,R2,R3,R21,R22,R23,Self\n",
+                                        "Atlantis,100,700,2000,0,0,0,true\n",
+                                        "Brobdingnag,50,300,1200,0,0,0,false\n",
+                                        "Carpania,25,100,300,0,0,0,false\n",
+                                        "Dinotopia,30,200,200,0,0,0,false\n",
+                                        "Erewhon,70,500,1700,0,0,0,false"));
 
             transformTemplateInput = @"[{
-	            ""name"": ""housing"",
-	            ""inputs"": {
-		            ""population"": ""5"",
-		            ""metallicElements"": ""1"",
-		            ""timber"": ""5"",
-		            ""metallicAlloys"": ""3""
+	            ""Name"": ""Housing"",
+	            ""Inputs"": {
+		            ""Population"": ""5"",
+		            ""Metallic Elements"": ""1"",
+		            ""Timber"": ""5"",
+		            ""Metallic Alloys"": ""3""
 	            },
-	            ""outputs"": {
-		            ""housing"": ""1"",
-		            ""housingWaste"": ""1"",
-		            ""population"": ""5""
+	            ""Outputs"": {
+		            ""Housing"": ""1"",
+		            ""Housing Waste"": ""1"",
+		            ""Population"": ""5""
 	            }
             }]";
 
@@ -63,7 +63,7 @@ namespace TradeGame.Test
             {
                 { "R1", new Resource() { Name = "R1", Weight = 0, Notes = "analog to population" }},
                 { "R2", new Resource() { Name = "R2", Weight = 0, Notes = "analog to metallic elements" }},
-                { "R3", new Resource() { Name = "R3", Weight = 0, Notes = "analog to timber" }},
+                { "R3", new Resource() { Name = "R3", Weight = 0, Notes = "analog to Timber" }},
                 { "R21", new Resource() { Name = "R21", Weight = 0.2, Notes = "analog to metallic alloys" }},
                 { "R22", new Resource() { Name = "R22", Weight = 0.5, Notes = "analog to electronics" }},
                 { "R23", new Resource() { Name = "R23", Weight = 0.8, Notes = "analog to housing (and housing sufficiency)" }},
@@ -84,7 +84,7 @@ namespace TradeGame.Test
             fileSystemMock.AddFile(countryFilePath, countryInput);
             IList<Country> expectedCountriesAndResources = new List<Country>()
                 {
-                    new Country() { Name = "Atlantis", State = new Dictionary<string, int>()
+                    new Country() { Name = "Atlantis", IsSelf = true, State = new Dictionary<string, int>()
                         {
                             { "R1",  100 },
                             { "R2",  700 },
@@ -149,19 +149,19 @@ namespace TradeGame.Test
             {
                 new TransformTemplate()
                 {
-                    Name = "housing",
+                    Name = "Housing",
                     Inputs = new Dictionary<string, int>()
                     {
-                        { "population", 5 },
-                        { "metallicElements", 1 },
-                        { "timber", 5 },
-                        { "metallicAlloys", 3 },
+                        { "Population", 5 },
+                        { "Metallic Elements", 1 },
+                        { "Timber", 5 },
+                        { "Metallic Alloys", 3 },
                     },
                     Outputs = new Dictionary<string, int>()
                     {
-                        { "housing", 1 },
-                        { "housingWaste", 1 },
-                        { "population", 5 }
+                        { "Housing", 1 },
+                        { "Housing Waste", 1 },
+                        { "Population", 5 }
                     },
                 }
             };

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 using System.IO.Abstractions;
+using System.Text.RegularExpressions;
 
 namespace TradeGame
 {
@@ -7,6 +9,24 @@ namespace TradeGame
     {
         static void Main(string[] args)
         {
+            int depthBound = 3;
+            bool limitFrontierSize = true;
+
+            foreach(string arg in args)
+            {
+                switch(arg)
+                {
+                    case string d when d.Contains("--depth="):
+                        depthBound = int.Parse(Regex.Match(d, @"\d+").Value);
+                        break;
+                    case string f when f.Contains("--limit-frontier-size="):
+                        limitFrontierSize = bool.Parse(Regex.Match(f.ToLower(), @"(true|false)").Value);
+                        break;
+                    default:
+                        throw new ArgumentException(arg);
+                }
+            }
+
             // set up DI
             var serviceProvider = new ServiceCollection()
                 .AddSingleton<ICalculator, Calculator>()
@@ -20,7 +40,7 @@ namespace TradeGame
                 .BuildServiceProvider();
 
             var scheduleGenerator = serviceProvider.GetService<ScheduleGenerator>();
-            scheduleGenerator.GameScheduler();
+            scheduleGenerator.GameScheduler(depthBound, limitFrontierSize);
         }
     }
 }

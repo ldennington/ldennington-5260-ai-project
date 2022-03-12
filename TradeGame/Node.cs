@@ -47,11 +47,10 @@
             nodeCopy.State = state;
 
             Schedule schedule = new Schedule();
-            foreach (Action action in Schedule.Steps)
+            foreach (Action action in Schedule.Actions)
             {
-                schedule.Steps.Add(action);
+                schedule.Actions.Add(action);
             }
-            schedule.ExpectedUtility = Schedule.ExpectedUtility;
             nodeCopy.Schedule = schedule;
 
             return nodeCopy;

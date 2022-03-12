@@ -27,9 +27,9 @@ namespace TradeGame
             {
                 var record = new Resource
                 {
-                    Name = csv.GetField("resource"),
-                    Weight = double.Parse(csv.GetField("weight")),
-                    Notes = csv.GetField("notes")
+                    Name = csv.GetField("Resource"),
+                    Weight = double.Parse(csv.GetField("Weight")),
+                    Notes = csv.GetField("Notes")
                 };
                 Global.Resources.Add(record.Name, record);
             }
@@ -48,13 +48,14 @@ namespace TradeGame
             {
                 var record = new Country
                 {
-                    Name = csv.GetField("country"),
+                    Name = csv.GetField("Country"),
+                    IsSelf = bool.Parse(csv.GetField("Self")),
                     State = new Dictionary<string, int>()
                 };
                 
                 foreach(string resource in csv.HeaderRecord)
                 {
-                    if (resource == "country")
+                    if (resource.Equals("Country") || resource.Equals("Self"))
                         continue;
                     record.State.Add(resource, int.Parse(csv.GetField(resource)));
                 }

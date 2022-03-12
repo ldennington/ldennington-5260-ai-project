@@ -76,3 +76,28 @@ __Note:__ The below steps have only been validated on a Windows machine. Althoug
     ```
 
 Note that the project also contains a special [GitHub Actions workflow](.github/workflows/ci.yml) that runs `dotnet build` and `dotnet test` on every Pull Request and new commit in `main` to protect against regressions.
+
+### Changing input parameters
+
+:rotating_light: PROCEED WITH CAUTION :rotating_light:
+
+Changing the below input parameters could cause the program runtime to increase significantly. Please keep this in mind when making changes.
+
+Additionally, the below instructions require VS Code to be installed and on your `PATH`. See [this section](#viewing-the-code) for VS Code setup instructions.
+
+If you would like to change the depth bound of the search or remove size limits from the frontier, you can do the following:
+
+1. Open a Command Prompt.
+0. If you have not already done so, clone this repository.
+    ```cmd
+    git clone https://github.com/ldennington/ldennington-5260-ai-project.git
+    ```
+0. Navigate to the `TradeGame\Properties` directory.
+    ```cmd
+    cd ldennington-5260-ai-project\TradeGame\Properties
+    ```
+0. Open the `launchSettings.json` file.
+    ```cmd
+    code launchSettings.json
+    ```
+0. Update/remove the `--depth=*` (defaults to 3) and/or the `--limit-frontier-size=*` (defaults to true) arguments as you see fit.

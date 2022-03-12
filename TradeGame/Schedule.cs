@@ -2,7 +2,6 @@
 {
     public class Schedule
     {
-        public IList<Action> Steps { get; set; } = new List<Action>();
-        public double ExpectedUtility { get; set; }
+        public IList<Action> Actions { get; set; } = new List<Action>();
     }
 }
