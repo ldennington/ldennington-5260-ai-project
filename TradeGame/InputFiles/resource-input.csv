@@ -1,16 +1,16 @@
-﻿resource,weight,notes
-population,0,"Doesn't factor directly into State Quality, no weight"
-metallicElements,0,"Doesn't factor directly into State Quality, no weight"
-timber,0,"Doesn't factor directly into State Quality, no weight"
-metallicAlloys,0,"Doesn't factor directly into State Quality, no weight"
-metallicAlloysWaste,0.3,All waste weighted at 0.3
-electronics,0.5,Resources consumed by population and accounted for in State Quality weighted at 0.5
-electronicsWaste,0.3,All waste weighted at 0.3
-housing,0.5,Resources consumed by population and accounted for in State Quality weighted at 0.5
-housingWaste,0.5,All waste weighted at 0.3
-availableLand,1,Used to standardize
-water,0,"Doesn't factor directly into State Quality, no weight"
-farm,0,"Doesn't factor directly into State Quality, no weight"
-farmWaste,0.3,All waste weighted at 0.3
-food,0.5,Resources consumed by population and accounted for in State Quality weighted at 0.5
-foodWaste,0.3,All waste weighted at 0.3
+﻿Resource,Weight,Notes
+Population,0,"Doesn't factor directly into State Quality, no weight"
+Metallic Elements,0,"Doesn't factor directly into State Quality, no weight"
+Timber,0,"Doesn't factor directly into State Quality, no weight"
+Metallic Alloys,0,"Doesn't factor directly into State Quality, no weight"
+Metallic Alloys Waste,0.3,All waste weighted at 0.3
+Electronics,0.5,Resources consumed by population and accounted for in State Quality weighted at 0.5
+Electronics Waste,0.3,All waste weighted at 0.3
+Housing,0.5,Resources consumed by population and accounted for in State Quality weighted at 0.5
+Housing Waste,0.5,All waste weighted at 0.3
+Available Land,1,Used to standardize
+Water,0,"Doesn't factor directly into State Quality, no weight"
+Farm,0,"Doesn't factor directly into State Quality, no weight"
+Farm Waste,0.3,All waste weighted at 0.3
+Food,0.5,Resources consumed by population and accounted for in State Quality weighted at 0.5
+Food Waste,0.3,All waste weighted at 0.3

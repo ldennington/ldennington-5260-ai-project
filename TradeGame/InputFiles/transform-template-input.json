@@ -1,67 +1,67 @@
 [
   {
-    "name": "housing",
-    "inputs": {
-      "population": "5",
-      "metallicElements": "1",
-      "timber": "5",
-      "metallicAlloys": "3"
+    "Name": "Housing",
+    "Inputs": {
+      "Population": "5",
+      "Metallic Elements": "1",
+      "Timber": "5",
+      "Metallic Alloys": "3"
     },
-    "outputs": {
-      "housing": "1",
-      "housingWaste": "1",
-      "population": "5"
+    "Outputs": {
+      "Housing": "1",
+      "Housing Waste": "1",
+      "Population": "5"
     }
   },
   {
-    "name": "alloys",
-    "inputs": {
-      "population": "1",
-      "metallicElements": "2"
+    "Name": "Alloys",
+    "Inputs": {
+      "Population": "1",
+      "Metallic Elements": "2"
     },
-    "outputs": {
-      "metallicAlloys": "1",
-      "metallicAlloysWaste": "1",
-      "population": "1"
+    "Outputs": {
+      "Metallic Alloys": "1",
+      "Metallic AlloysWaste": "1",
+      "Population": "1"
     }
   },
   {
-    "name": "electronics",
-    "inputs": {
-      "population": "1",
-      "metallicElements": "3",
-      "metallicAlloys": "2"
+    "Name": "Electronics",
+    "Inputs": {
+      "Population": "1",
+      "Metallic Elements": "3",
+      "Metallic Alloys": "2"
     },
-    "outputs": {
-      "electronics": "2",
-      "electronicsWaste": "1",
-      "population": "1"
+    "Outputs": {
+      "Electronics": "2",
+      "Electronics Waste": "1",
+      "Population": "1"
     }
   },
   {
-    "name": "farm",
-    "inputs": {
-      "population": "3",
-      "water": "5",
-      "availableLand": "2"
+    "Name": "Farm",
+    "Inputs": {
+      "Population": "3",
+      "Water": "5",
+      "Available Land": "2"
     },
-    "outputs": {
-      "population": "3",
-      "farmWaste": "1",
-      "farm": "1"
+    "Outputs": {
+      "Population": "3",
+      "Farm Waste": "1",
+      "Farm": "1"
     }
   },
   {
-    "name": "food",
-    "inputs": {
-      "population": "1",
-      "water": "2",
-      "farm": "1"
+    "Name": "Food",
+    "Inputs": {
+      "Population": "1",
+      "Water": "2",
+      "Farm": "1"
     },
-    "outputs": {
-      "population": "1",
-      "foodWaste": "1",
-      "food": "2"
+    "Outputs": {
+      "Population": "1",
+      "Food Waste": "1",
+      "Food": "2"
     }
   }
 ]

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TradeGame": {
+      "commandName": "Project",
+      "commandLineArgs": "--depth=5 --limit-frontier-size=true"
+    }
+  }
+}

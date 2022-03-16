@@ -2,13 +2,13 @@
 {
     internal class Calculator : ICalculator
     {
-        private const double gamma = 0.7;
-        private const double x_0 = 0;
-        private const double k = 1;
-        private const double L = 1;
-        private const int C = -3;
+        private double gamma = 0.9; // 0 <= gamma < 1
+        private double x_0 = -5; // 0 as starting point
+        private double k = 1; // 1 as starting point
+        private double L = 1;
+        private int C = -2;
 
-        public double CalculateExpectedUtility(Schedule schedule, IList<Country> worldInitialState, IList<Country> worldEndingState)
+        public void CalculateExpectedUtility(Schedule schedule, IList<Country> worldInitialState, IList<Country> worldEndingState)
         {
             Country selfInitialState = worldInitialState.Where(c => c.IsSelf).FirstOrDefault();
             Country selfEndingState = worldEndingState.Where(c => c.IsSelf).FirstOrDefault();
@@ -16,8 +16,7 @@
             double discountedReward = CalculateDiscountedReward(schedule, selfInitialState, selfEndingState);
             double probabilityOfAcceptance = CalculateProbabilityOfAcceptance(schedule, worldInitialState, worldEndingState);
 
-            // round to 2 decimal places
-            return Math.Round(probabilityOfAcceptance * discountedReward + (1-probabilityOfAcceptance) * C, 4);
+            schedule.Actions.Last().ExpectedUtility = Math.Round(probabilityOfAcceptance * discountedReward + (1-probabilityOfAcceptance) * C, 4);
         }
 
         /* State Quality Measure
@@ -37,9 +36,6 @@
          * ecological footprint
          * 
          * Once this bar is met, countries should try to minimize their ecological footprint
-         * 
-         * Given the time constraints for Part 1, food, farm, and renewable energy have not
-         * been accounted for at this time. However, there is potential for that in Part 2.
          * 
          * Definition and background on ecological footprint:
          *      https://www.footprintnetwork.org/content/documents/EF2006technotes2.pdf
@@ -62,34 +58,34 @@
             {
                 switch (resource.Name)
                 {
-                    case "population":
-                        population = country.State["population"];
+                    case "Population":
+                        population = country.State["Population"];
                         break;
-                    case "food":
+                    case "Food":
                         weightedFood = WeightResource(country, resource.Name);
                         break;
-                    case "housing":
+                    case "Housing":
                         weightedHousing = WeightResource(country, resource.Name);
                         break;
-                    case "electronics":
+                    case "Electronics":
                         weightedElectronics = WeightResource(country, resource.Name);
                         break;
-                    case "availableLand":
+                    case "Available Land":
                         weightedAvailableLand = WeightResource(country, resource.Name);
                         break;
-                    case "foodWaste":
-                    case "farmWaste":
-                    case "housingWaste":
-                    case "electronicsWaste":
-                    case "metallicAlloysWaste":
+                    case "Food Waste":
+                    case "Farm Waste":
+                    case "Housing Waste":
+                    case "Electronics Waste":
+                    case "Metallic Alloys Waste":
                         weightedWaste += WeightResource(country, resource.Name);
                         break;
                 }
             }
 
-            double foodPerPerson = country.State["food"] / population;
-            double housingPerPerson = country.State["housing"] / population;
-            double electronicsPerPerson = country.State["electronics"] / population;
+            double foodPerPerson = country.State["Food"] / population;
+            double housingPerPerson = country.State["Housing"] / population;
+            double electronicsPerPerson = country.State["Electronics"] / population;
 
             if (foodPerPerson < 3 || housingPerPerson < 0.5 || electronicsPerPerson < 1.0)
             {
@@ -98,7 +94,6 @@
 
             ecologicalFootprint += (weightedFood + weightedHousing + weightedElectronics + weightedWaste) / weightedAvailableLand;
 
-            // round to 2 decimal places
             // use the inverse to correctly reward for lower ecological footprints
             country.StateQuality = Math.Round(1/ecologicalFootprint, 4);
         }
@@ -122,7 +117,6 @@
                 CalculateStateQuality(endingState);
             }
 
-            // round to 2 decimal places
             return Math.Round(endingState.StateQuality - initialState.StateQuality, 4);
         }
 
@@ -130,8 +124,7 @@
         {
             double undiscountedReward = CalculateUndiscountedReward(initialState, endingState);
 
-            // round to 2 decimal places
-            return Math.Round(Math.Pow(gamma, schedule.Steps.Count) * undiscountedReward, 4);
+            return Math.Round(Math.Pow(gamma, schedule.Actions.Count) * undiscountedReward, 4);
         }
 
         public double CalculateProbabilityOfAcceptance(Schedule schedule, IList<Country> worldInitialState, IList<Country> worldEndingState)
@@ -156,7 +149,6 @@
                 overallProbabilityOfAcceptance *= probability;
             }
 
-            // round to 2 decimal places
             return Math.Round(overallProbabilityOfAcceptance, 4);
         }
 
@@ -164,7 +156,7 @@
         {
             HashSet<string> participatingCountries = new HashSet<string>();
 
-            foreach (Action action in schedule.Steps)
+            foreach (Action action in schedule.Actions)
             {
                 switch (action.GetType().Name)
                 {

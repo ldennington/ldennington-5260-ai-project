@@ -9,13 +9,13 @@ namespace TradeGame
     [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
     internal class TransformTemplate : Action
     {
-        [JsonPropertyName("name")]
+        [JsonPropertyName("Name")]
         public string Name { get; set; }
-        [JsonPropertyName("inputs")]
+        [JsonPropertyName("Inputs")]
         public IDictionary<string, int> Inputs { get; set; }
-        [JsonPropertyName("outputs")]
+        [JsonPropertyName("Outputs")]
         public IDictionary<string, int> Outputs { get; set; }
-        [JsonIgnore]
+        [JsonPropertyName("Country")]
         public string Country { get; set; }
         [JsonIgnore]
         public int Scale { get; set; }

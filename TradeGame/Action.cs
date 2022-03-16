@@ -9,7 +9,11 @@ namespace TradeGame
     [JsonConverter(typeof(ActionConverter))]
     public abstract class Action
     {
+        [JsonPropertyName("Type")]
         public string Type { get; set; }
+        [JsonPropertyName("Expected Utility")]
+        public double ExpectedUtility { get; set; }
+
     }
 
     // System.Text.Json cannot serialize/deserialize abstract classes.

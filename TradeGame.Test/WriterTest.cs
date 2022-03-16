@@ -23,8 +23,7 @@ namespace TradeGame.Test
 
             Global.Solutions.Enqueue(new Schedule()
             {
-                ExpectedUtility = 14.2,
-                Steps = new List<Action>() {
+                Actions = new List<Action>() {
                     new TransformTemplate()
                     {
                         Name = "housing",
@@ -41,7 +40,8 @@ namespace TradeGame.Test
                             { "housing", 1 },
                             { "housingWaste", 1 },
                             { "population", 5 },
-                        }
+                        },
+                        ExpectedUtility = 14.5
                     },
                     new TransformTemplate()
                     {
@@ -58,15 +58,15 @@ namespace TradeGame.Test
                             { "population", 1 },
                             { "electronics", 2 },
                             { "electronicsWaste", 1 },
-                        }
+                        },
+                        ExpectedUtility = 11.2
                     }
                 }
-            }, 14.2);
+            }, 11.2);
 
             Global.Solutions.Enqueue(new Schedule()
             {
-                ExpectedUtility = 9.5,
-                Steps = new List<Action>() {
+                Actions = new List<Action>() {
                     new TransformTemplate()
                     {
                         Name = "electronics",
@@ -82,7 +82,8 @@ namespace TradeGame.Test
                             { "population", 1 },
                             { "electronics", 2 },
                             { "electronicsWaste", 1 },
-                        }
+                        },
+                        ExpectedUtility = 7.9
                     },
                     new TransformTemplate()
                     {
@@ -98,14 +99,15 @@ namespace TradeGame.Test
                             { "population", 1 },
                             { "metallicAlloys", 1 },
                             { "metallicAlloysWaste", 1 },
-                        }
+                        },
+                        ExpectedUtility = 10.0
                     }
                 }
-            }, 9.5);
+            }, 10.0);
 
             string expectedOutput = @"[
                 {
-                  ""Steps"": [
+                  ""Actions"": [
                     {
                       ""name"": ""housing"",
                       ""inputs"": {
@@ -119,7 +121,10 @@ namespace TradeGame.Test
                         ""housingWaste"": 1,
                         ""population"": 5
                       },
-                      ""Type"": ""transform""
+                      ""country"": ""atlantis"",
+                      ""type"": ""transform"",
+
+                      ""expectedUtility"": 14.5
                     },
                     {
                       ""name"": ""electronics"",
@@ -133,13 +138,14 @@ namespace TradeGame.Test
                         ""electronics"": 2,
                         ""electronicsWaste"": 1
                       },
-                      ""Type"": ""transform""
+                      ""country"": ""atlantis"",
+                      ""type"": ""transform"",
+                      ""expectedUtility"": 11.2
                     }
-                  ],
-                  ""ExpectedUtility"": 14.2
+                  ]
                 },
                 {
-                  ""Steps"": [
+                  ""Actions"": [
                     {
                       ""name"": ""electronics"",
                       ""inputs"": {
@@ -152,7 +158,9 @@ namespace TradeGame.Test
                         ""electronics"": 2,
                         ""electronicsWaste"": 1
                       },
-                      ""Type"": ""transform""
+                      ""country"": ""atlantis"",
+                      ""type"": ""transform"",
+                      ""expectedUtility"": 7.9
                     },
                     {
                       ""name"": ""alloys"",
@@ -165,10 +173,11 @@ namespace TradeGame.Test
                         ""metallicAlloys"": 1,
                         ""metallicAlloysWaste"": 1
                       },
-                      ""Type"": ""transform""
+                      ""country"": ""atlantis"",
+                      ""type"": ""transform"",
+                      ""expectedUtility"": 10       
                     }
-                  ],
-                  ""ExpectedUtility"": 9.5
+                  ]
                 }
               ]";
 
