@@ -59,7 +59,7 @@
                 }
                 else
                 {
-                    foreach (Node successor in GenerateSuccessors(currentNode))
+                    foreach (Node successor in GenerateSuccessors(currentNode, startNode))
                     {
                         calculator.CalculateExpectedUtility(successor.Schedule, startNode.State, successor.State);
                         double expectedUtility = successor.Schedule.Actions.Last().ExpectedUtility;
@@ -77,23 +77,17 @@
             }
         }
 
-        public IList<Node> GenerateSuccessors(Node currentNode)
+        public IList<Node> GenerateSuccessors(Node currentNode, Node startNode)
         {
             IList<Node> successors = new List<Node>();
             Country self = currentNode.State.Where(c => c.IsSelf).FirstOrDefault();
-            ExecuteTransformsAndTransfers(currentNode, self, successors);
+            ExecuteTransforms(currentNode, self, successors);
+            ExecuteTransfers(currentNode, self, successors, startNode);
             return successors;
         }
 
-        public void ExecuteTransformsAndTransfers(Node currentNode, Country self, IList<Node> successors)
+        public void ExecuteTransforms(Node currentNode, Country self, IList<Node> successors)
         {
-            // this means a transfer sequence occurred, and we don't want to
-            // generate any successors until we catch up with depth
-            if (currentNode.Schedule.Actions.Count > currentNode.Depth)
-            {
-                return;
-            }
-
             foreach (TransformTemplate template in Global.TransformTemplates)
             {
                 Node successor = ExecuteTransform(currentNode, self, template);
@@ -101,6 +95,16 @@
                 {
                     successors.Add(ExecuteTransform(currentNode, self, template));
                 }
+            }
+        }
+
+        public void ExecuteTransfers(Node currentNode, Country self, IList<Node> successors, Node startNode)
+        {
+            // this means a transfer sequence occurred, and we don't want to
+            // generate any successors until we catch up with depth
+            if (currentNode.Schedule.Actions.Count > currentNode.Depth)
+            {
+                return;
             }
 
             // Transfer Sequence:
@@ -118,6 +122,8 @@
                         !resource.Equals("Farm"))
                     {
                         successor = ExecuteTransfer(currentNode, country, self.Name, resource, successor: successor);
+                        calculator.CalculateExpectedUtility(successor.Schedule, startNode.State, successor.State);
+
                         IList<TransformTemplate> potentialTransforms = Global.TransformTemplates.Where(t => t.Inputs.Keys.Contains(resource)).ToList();
 
                         // if we transferred a resource that can't be transformed, terminate
@@ -128,6 +134,7 @@
                             var random = new Random();
                             TransformTemplate transformTemplate = potentialTransforms[random.Next(potentialTransforms.Count)];
                             successor = ExecuteTransform(currentNode, self, transformTemplate, successor);
+                            calculator.CalculateExpectedUtility(successor.Schedule, startNode.State, successor.State);
 
                             // if transform was successful, send half the transformed resources back to the
                             // original country
