@@ -81,6 +81,14 @@
         {
             IList<Node> successors = new List<Node>();
             Country self = currentNode.State.Where(c => c.IsSelf).FirstOrDefault();
+
+            // this means a transfer sequence occurred, and we don't want to
+            // generate any successors until we catch up with depth
+            if (currentNode.Schedule.Actions.Count > currentNode.Depth)
+            {
+                return successors;
+            }
+
             ExecuteTransforms(currentNode, self, successors);
             ExecuteTransfers(currentNode, self, successors, startNode);
             return successors;
@@ -100,13 +108,6 @@
 
         public void ExecuteTransfers(Node currentNode, Country self, IList<Node> successors, Node startNode)
         {
-            // this means a transfer sequence occurred, and we don't want to
-            // generate any successors until we catch up with depth
-            if (currentNode.Schedule.Actions.Count > currentNode.Depth)
-            {
-                return;
-            }
-
             // Transfer Sequence:
             // 1. A country transfers resources to self.
             // 2. Self uses those resources in a transform.
