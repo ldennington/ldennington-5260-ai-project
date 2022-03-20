@@ -10,7 +10,7 @@ namespace TradeGame
     public abstract class Action
     {
         [JsonPropertyName("Type")]
-        public string Type { get; set; }
+        public string? Type { get; set; }
         [JsonPropertyName("Expected Utility")]
         public double ExpectedUtility { get; set; }
 

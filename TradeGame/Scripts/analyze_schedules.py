@@ -23,5 +23,5 @@ plt.title(f'Ordered Expected Utilities for {i} Schedules', **font)
 x = expectedUtilitiesAndOrder.values()
 y = expectedUtilitiesAndOrder.keys()
 
-plt.scatter(x, y, c="#FC05CB")
+plt.scatter(x, y, c="#9999FF")
 plt.show()
