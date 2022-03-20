@@ -2,7 +2,7 @@
 {
     internal class Node
     {
-        public Node Parent { get; set; } = null;
+        public Node? Parent { get; set; } = null;
         public int Depth
         {
             get
