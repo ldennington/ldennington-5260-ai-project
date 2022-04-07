@@ -53,6 +53,7 @@ namespace TradeGame
 
         public void CalculateScale(Country country)
         {
+            MatchInputAndResourceNames();
             int[] maxes = new int[Inputs.Count];
             int i = 0;
             foreach (string resource in Inputs.Keys)
@@ -99,6 +100,30 @@ namespace TradeGame
                 }
 
                 country.State[resource] += Outputs[resource];
+            }
+        }
+
+        // handle the use of key "Waste" for recyclables
+        public void MatchInputAndResourceNames()
+        {
+            foreach (string resource in Inputs.Keys)
+            {
+                if (resource.Equals("Waste"))
+                {
+                    foreach (string resourceName in Global.Resources.Keys)
+                    {
+                        if (resourceName.Contains(resource))
+                        {
+                            string key = resourceName;
+                            int value = Inputs[resource];
+
+                            Inputs.Remove(resource);
+                            Inputs.Add(key, value);
+                            break;
+                        }
+                    }
+                    break;
+                }
             }
         }
     }

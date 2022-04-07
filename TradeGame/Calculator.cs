@@ -24,8 +24,8 @@
          * to sustain itself (including ridding itself of waste)
          * Ecological footprint equation (extremely simplified for our purposes):
          * 
-         *              WeightedFood + WeightedHousing + WeightedElectronics + WeightedWastes
-         *          -------------------------------------------------------------------------------
+         *       WeightedFood + WeightedHousing + WeightedElectronics + WeightedWastes - WeightedRecyclables
+         *       -------------------------------------------------------------------------------------------
          *                                  WeightedAvailableland
          * 
          * A country should have a minimum of the following per person for quality of life:
@@ -52,6 +52,7 @@
             double weightedElectronics = 0.0;
             double weightedAvailableLand = 0.0;
             double weightedWaste = 0.0;
+            double weightedRecyclables = 0.0;
             double ecologicalFootprint = 0.0;
 
             foreach (Resource resource in Global.Resources.Values)
@@ -73,6 +74,9 @@
                     case "Available Land":
                         weightedAvailableLand = WeightResource(country, resource.Name);
                         break;
+                    case "Recyclables":
+                        weightedRecyclables = WeightResource(country, resource.Name);
+                        break;
                     case "Food Waste":
                     case "Farm Waste":
                     case "Housing Waste":
@@ -92,7 +96,7 @@
                 ecologicalFootprint += 1.0;
             }
 
-            ecologicalFootprint += (weightedFood + weightedHousing + weightedElectronics + weightedWaste) / weightedAvailableLand;
+            ecologicalFootprint += (weightedFood + weightedHousing + weightedElectronics + weightedWaste - weightedRecyclables) / weightedAvailableLand;
 
             // use the inverse to correctly reward for lower ecological footprints
             country.StateQuality = Math.Round(1/ecologicalFootprint, 4);

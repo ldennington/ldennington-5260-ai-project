@@ -1,6 +1,6 @@
-﻿Country,Population,Metallic Elements,Timber,Metallic Alloys,Metallic Alloys Waste,Electronics,Electronics Waste,Housing,Housing Waste,Available Land,Water,Farm,Farm Waste,Food,Food Waste,Self
-Gaia,100,20,30,40,40,10,40,15,40,200,100,3,40,150,100,TRUE
-Houtu,50,300,400,220,100,50,5,25,15,300,200,4,4,150,63,FALSE
-Mat Zemlya,25,100,300,350,175,30,8,18,18,100,150,3,3,100,65,FALSE
-Pachamama,30,200,200,280,80,40,45,15,10,300,550,3,3,120,60,FALSE
-Sif,70,80,350,190,100,10,10,40,40,180,250,8,8,250,90,FALSE
+﻿Country,Population,Metallic Elements,Timber,Metallic Alloys,Metallic Alloys Waste,Electronics,Electronics Waste,Housing,Housing Waste,Available Land,Water,Farm,Farm Waste,Food,Food Waste,Recyclables,Self
+Gaia,100,20,30,40,40,10,40,15,40,200,100,3,40,150,100,10,TRUE
+Houtu,50,300,400,220,100,50,5,25,15,300,200,4,4,150,63,30,FALSE
+Mat Zemlya,25,100,300,350,175,30,8,18,18,100,150,3,3,100,65,20,FALSE
+Pachamama,30,200,200,280,80,40,45,15,10,300,550,3,3,120,60,15,FALSE
+Sif,70,80,350,190,100,10,10,40,40,180,250,8,8,250,90,40,FALSE
