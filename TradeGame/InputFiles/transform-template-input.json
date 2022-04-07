@@ -63,5 +63,17 @@
       "Food Waste": "1",
       "Food": "2"
     }
+  },
+  {
+    "Name": "Recycle",
+    "Inputs": {
+      "Population": "1",
+      "Waste": "1",
+      "Water": "2"
+    },
+    "Outputs": {
+      "Population": "1",
+      "Recyclables": "1"
+    }
   }
 ]
