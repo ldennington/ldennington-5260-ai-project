@@ -85,7 +85,7 @@ Changing the below input parameters could cause the program runtime to increase 
 
 Additionally, the below instructions require VS Code to be installed and on your `PATH`. See [this section](#viewing-the-code) for VS Code setup instructions.
 
-If you would like to change the depth bound of the search or remove size limits from the frontier, you can do the following:
+If you would like to change the depth bound of the search or the size limit of the frontier, you can do the following:
 
 1. Open a Command Prompt.
 0. If you have not already done so, clone this repository.
@@ -100,4 +100,4 @@ If you would like to change the depth bound of the search or remove size limits 
     ```cmd
     code launchSettings.json
     ```
-0. Update/remove the `--depth=*` (defaults to 3) and/or the `--limit-frontier-size=*` (defaults to true) arguments as you see fit.
+0. Update/remove the `--depth=*` (defaults to 3) and/or the `--frontier-boundary=*` (defaults to 100) arguments as you see fit.

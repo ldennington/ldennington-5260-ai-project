@@ -10,7 +10,7 @@ namespace TradeGame
         static void Main(string[] args)
         {
             int depthBound = 3;
-            bool limitFrontierSize = true;
+            int frontierBoundary = 100;
 
             foreach(string arg in args)
             {
@@ -19,8 +19,8 @@ namespace TradeGame
                     case string d when d.Contains("--depth="):
                         depthBound = int.Parse(Regex.Match(d, @"\d+").Value);
                         break;
-                    case string f when f.Contains("--limit-frontier-size="):
-                        limitFrontierSize = bool.Parse(Regex.Match(f.ToLower(), @"(true|false)").Value);
+                    case string f when f.Contains("--frontier-boundary="):
+                        frontierBoundary = int.Parse(Regex.Match(f, @"\d+").Value);
                         break;
                     default:
                         throw new ArgumentException(arg);
@@ -40,7 +40,7 @@ namespace TradeGame
                 .BuildServiceProvider();
 
             var scheduleGenerator = serviceProvider.GetService<ScheduleGenerator>();
-            scheduleGenerator.GameScheduler(depthBound, limitFrontierSize);
+            scheduleGenerator.GameScheduler(depthBound, frontierBoundary);
         }
     }
 }
