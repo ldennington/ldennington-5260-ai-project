@@ -15,8 +15,18 @@
 
             double discountedReward = CalculateDiscountedReward(schedule, selfInitialState, selfEndingState);
             double probabilityOfAcceptance = CalculateProbabilityOfAcceptance(schedule, worldInitialState, worldEndingState);
+            double actionExpectedUtility = Math.Round(probabilityOfAcceptance * discountedReward + (1 - probabilityOfAcceptance) * C, 4);
 
-            schedule.Actions.Last().ExpectedUtility = Math.Round(probabilityOfAcceptance * discountedReward + (1-probabilityOfAcceptance) * C, 4);
+            // record cumulative expected utility
+            double expectedUtility = 0.0;
+            if (schedule.Actions.Count == 1)
+            {
+                schedule.Actions.Last().ExpectedUtility = actionExpectedUtility;
+            }
+            else
+            {
+                schedule.Actions.Last().ExpectedUtility = actionExpectedUtility + schedule.Actions[^2].ExpectedUtility;
+            }
         }
 
         /* State Quality Measure
