@@ -13,7 +13,6 @@ namespace TradeGame
         public string? Type { get; set; }
         [JsonPropertyName("Expected Utility")]
         public double ExpectedUtility { get; set; }
-
     }
 
     // System.Text.Json cannot serialize/deserialize abstract classes.

@@ -48,10 +48,12 @@
 
             while (frontier.Count > 0)
             {
+                bool isFinal = false;
                 Node currentNode = frontier.Dequeue();
                 if (currentNode.Depth >= depthBound)
                 {
-                    calculator.CalculateExpectedUtility(currentNode.Schedule, startNode.State, currentNode.State);
+                    isFinal = true;
+                    calculator.CalculateExpectedUtility(currentNode.Schedule, startNode.State, currentNode.State, isFinal);
                     Global.Solutions.Enqueue(new Schedule()
                     {
                         Actions = currentNode.Schedule.Actions,
@@ -61,7 +63,7 @@
                 {
                     foreach (Node successor in GenerateSuccessors(currentNode, startNode))
                     {
-                        calculator.CalculateExpectedUtility(successor.Schedule, startNode.State, successor.State);
+                        calculator.CalculateExpectedUtility(successor.Schedule, startNode.State, successor.State, isFinal);
                         double expectedUtility = successor.Schedule.Actions.Last().ExpectedUtility;
                         UpdateFrontier(frontier, successor, expectedUtility, frontierBoundary);
                     }
@@ -270,6 +272,12 @@
 
         public void UpdateFrontier(PriorityQueue<Node, double> frontier, Node potentialSuccessor, double potentialSuccessorUtility, int frontierBoundary)
         {
+            if (potentialSuccessorUtility == -1.0)
+            {
+                // This node had a negative EU, reject it
+                return;
+            }
+
             if (frontier.Count < frontierBoundary)
             {
                 frontier.Enqueue(potentialSuccessor, potentialSuccessorUtility);
