@@ -13,7 +13,7 @@
             this.calculator = calculator;
         }
 
-        public void GameScheduler(int depthBound, bool limitFrontierSize)
+        public void GameScheduler(int depthBound, int frontierBoundary)
         {
             // read input
             ReadFiles();
@@ -23,7 +23,7 @@
             {
                 State = Global.InitialState
             };
-            Search(startNode, depthBound, limitFrontierSize);
+            Search(startNode, depthBound, frontierBoundary);
 
             // write results
             writer.WriteSchedules();
@@ -36,7 +36,7 @@
             reader.ReadCountries(Path.Combine(Directory.GetCurrentDirectory(), "InputFiles", "country-input.csv"));
         }
 
-        public void Search(Node startNode, int depthBound, bool limitFrontierSize)
+        public void Search(Node startNode, int depthBound, int frontierBoundary)
         {
             // C# priority queue defaults to dequeuing lowest scores first
             // override this with a custom comparer to dequeue highest scores first
@@ -63,15 +63,7 @@
                     {
                         calculator.CalculateExpectedUtility(successor.Schedule, startNode.State, successor.State);
                         double expectedUtility = successor.Schedule.Actions.Last().ExpectedUtility;
-
-                        if (limitFrontierSize)
-                        {
-                            UpdateFrontier(frontier, successor, expectedUtility);
-                        }
-                        else
-                        {
-                            frontier.Enqueue(successor, expectedUtility);
-                        }
+                        UpdateFrontier(frontier, successor, expectedUtility, frontierBoundary);
                     }
                 }
             }
@@ -276,9 +268,9 @@
             return null;
         }
 
-        public void UpdateFrontier(PriorityQueue<Node, double> frontier, Node potentialSuccessor, double potentialSuccessorUtility)
+        public void UpdateFrontier(PriorityQueue<Node, double> frontier, Node potentialSuccessor, double potentialSuccessorUtility, int frontierBoundary)
         {
-            if (frontier.Count < 100)
+            if (frontier.Count < frontierBoundary)
             {
                 frontier.Enqueue(potentialSuccessor, potentialSuccessorUtility);
                 return;
