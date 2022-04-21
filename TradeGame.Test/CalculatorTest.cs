@@ -202,15 +202,15 @@ namespace TradeGame.Test
         [TestMethod]
         public void CalculateExpectedUtility()
         {
-            double expectedUtility = 0.2599;
-            calculator.CalculateExpectedUtility(schedule, worldInitialState, worldEndingState);
+            double expectedUtility = 0.853;
+            calculator.CalculateExpectedUtility(schedule, worldInitialState, worldEndingState, false);
             schedule.Actions.Last().ExpectedUtility.Should().Be(expectedUtility);
         }
 
         [TestMethod]
         public void CalculateStateQuality()
         {
-            double expected = 0.7865;
+            double expected = 98.7286;
             calculator.CalculateStateQuality(selfEndingState);
             selfEndingState.StateQuality.Should().Be(expected);
         }
@@ -218,21 +218,21 @@ namespace TradeGame.Test
         [TestMethod]
         public void CalculateUndiscountedReward()
         {
-            double expectedUndiscountedReward = 0.38;
+            double expectedUndiscountedReward = 1.1886;
             calculator.CalculateUndiscountedReward(selfInitialState, selfEndingState).Should().Be(expectedUndiscountedReward);
         }
 
         [TestMethod]
         public void CalculateDiscountedReward()
         {
-            double expectedDiscountedReward = 0.2770;
+            double expectedDiscountedReward = 0.8665;
             calculator.CalculateDiscountedReward(schedule, selfInitialState, selfEndingState).Should().Be(expectedDiscountedReward);
         }
 
         [TestMethod]
         public void CalculateProbabilityOfParticipation()
         {
-            double expectedProbability = 0.9925;
+            double expectedProbability = 0.9953;
             calculator.CalculateProbabilityOfAcceptance(schedule, worldInitialState, worldEndingState).Should().Be(expectedProbability);
         }
 
