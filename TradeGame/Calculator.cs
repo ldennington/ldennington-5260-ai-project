@@ -8,7 +8,7 @@
         private double L = 1;
         private int C = -2;
 
-        public void CalculateExpectedUtility(Schedule schedule, IList<Country> worldInitialState, IList<Country> worldEndingState)
+        public void CalculateExpectedUtility(Schedule schedule, IList<Country> worldInitialState, IList<Country> worldEndingState, bool isFinal)
         {
             Country selfInitialState = worldInitialState.Where(c => c.IsSelf).FirstOrDefault();
             Country selfEndingState = worldEndingState.Where(c => c.IsSelf).FirstOrDefault();
@@ -17,15 +17,23 @@
             double probabilityOfAcceptance = CalculateProbabilityOfAcceptance(schedule, worldInitialState, worldEndingState);
             double actionExpectedUtility = Math.Round(probabilityOfAcceptance * discountedReward + (1 - probabilityOfAcceptance) * C, 4);
 
-            // record cumulative expected utility
-            double expectedUtility = 0.0;
-            if (schedule.Actions.Count == 1)
+            if (actionExpectedUtility > 0.0 || isFinal)
             {
-                schedule.Actions.Last().ExpectedUtility = actionExpectedUtility;
+                // record expected utility
+                double expectedUtility = 0.0;
+                if (schedule.Actions.Count == 1)
+                {
+                    schedule.Actions.Last().ExpectedUtility = actionExpectedUtility;
+                }
+                else
+                {
+                    schedule.Actions.Last().ExpectedUtility = actionExpectedUtility + schedule.Actions[^2].ExpectedUtility;
+                }
             }
             else
             {
-                schedule.Actions.Last().ExpectedUtility = actionExpectedUtility + schedule.Actions[^2].ExpectedUtility;
+                // there was a negative Expected Utility so we don't want to follow this path
+                schedule.Actions.Last().ExpectedUtility = -1;
             }
         }
 
@@ -108,8 +116,8 @@
 
             ecologicalFootprint += (weightedFood + weightedHousing + weightedElectronics + weightedWaste - weightedRecyclables) / weightedAvailableLand;
 
-            // use the inverse to correctly reward for lower ecological footprints
-            country.StateQuality = Math.Round(1/ecologicalFootprint, 4);
+            // Subtract to correctly reward for lower ecological footprints
+            country.StateQuality = Math.Round(100-ecologicalFootprint, 4);
         }
 
         public double WeightResource(Country country, string resource)
