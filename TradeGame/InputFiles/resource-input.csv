@@ -3,15 +3,15 @@ Population,0,"Doesn't factor directly into State Quality, no weight"
 Metallic Elements,0,"Doesn't factor directly into State Quality, no weight"
 Timber,0,"Doesn't factor directly into State Quality, no weight"
 Metallic Alloys,0,"Doesn't factor directly into State Quality, no weight"
-Metallic Alloys Waste,0.3,All waste weighted at 0.3
-Electronics,0.5,Resources consumed by population and accounted for in State Quality weighted at 0.5
-Electronics Waste,0.3,All waste weighted at 0.3
-Housing,0.5,Resources consumed by population and accounted for in State Quality weighted at 0.5
-Housing Waste,0.5,All waste weighted at 0.3
+Metallic Alloys Waste,3,All waste weighted at 3
+Electronics,5,Resources consumed by population and accounted for in State Quality weighted at 5
+Electronics Waste,3,All waste weighted at 3
+Housing,5,Resources consumed by population and accounted for in State Quality weighted at 5
+Housing Waste,5,All waste weighted at 3
 Available Land,1,Used to standardize
 Water,0,"Doesn't factor directly into State Quality, no weight"
 Farm,0,"Doesn't factor directly into State Quality, no weight"
-Farm Waste,0.3,All waste weighted at 0.3
-Food,0.5,Resources consumed by population and accounted for in State Quality weighted at 0.5
-Food Waste,0.3,All waste weighted at 0.3
-Recyclables,0.7,"Recyclables weighted at 0.7, due to their importance in reducing ecological footprint"
+Farm Waste,3,All waste weighted at 3
+Food,5,Resources consumed by population and accounted for in State Quality weighted at 5
+Food Waste,3,All waste weighted at 3
+Recyclables,7,"Recyclables weighted at 7, due to their importance in reducing ecological footprint"
