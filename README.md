@@ -100,4 +100,4 @@ If you would like to change the depth bound of the search or the size limit of t
     ```cmd
     code launchSettings.json
     ```
-0. Update/remove the `--depth=*` (defaults to 3) and/or the `--frontier-boundary=*` (defaults to 100) arguments as you see fit.
+0. Update/remove the `--depth=*` (defaults to 3), `--frontier-boundary=*` (defaults to 100), and/or `--test-model=*` (defaults to false) arguments as you see fit.

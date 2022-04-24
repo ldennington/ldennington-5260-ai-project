@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,10 +14,13 @@ namespace TradeGame.Test
         private Country otherCountryInitialState;
         private Country otherCountryEndingState;
         private Schedule schedule;
+
         ICalculator calculator;
 
         private IList<Country> worldInitialState;
         private IList<Country> worldEndingState;
+
+        Mock<IWriter> writerMock = new Mock<IWriter>();
 
         [TestInitialize]
         public void Initialize()
@@ -186,7 +190,7 @@ namespace TradeGame.Test
                 }
             };
 
-            calculator = new Calculator();
+            calculator = new Calculator(writerMock.Object);
         }
 
         [TestCleanup]
@@ -203,7 +207,7 @@ namespace TradeGame.Test
         public void CalculateExpectedUtility()
         {
             double expectedUtility = 0.853;
-            calculator.CalculateExpectedUtility(schedule, worldInitialState, worldEndingState, false);
+            calculator.CalculateExpectedUtility(schedule, worldInitialState, worldEndingState, false, true);
             schedule.Actions.Last().ExpectedUtility.Should().Be(expectedUtility);
         }
 

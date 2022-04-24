@@ -2,7 +2,7 @@
 {
     public interface ICalculator
     {
-        void CalculateExpectedUtility(Schedule schedule, IList<Country> worldInitialState, IList<Country> worldEndingState, bool isFinal);
+        void CalculateExpectedUtility(Schedule schedule, IList<Country> worldInitialState, IList<Country> worldEndingState, bool isFinal, bool testModel);
 
         void CalculateStateQuality(Country country);
 

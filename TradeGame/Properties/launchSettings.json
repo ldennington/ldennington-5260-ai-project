@@ -2,7 +2,7 @@
   "profiles": {
     "TradeGame": {
       "commandName": "Project",
-      "commandLineArgs": "--depth=20 --frontier-boundary=125"
+      "commandLineArgs": "--depth=20 --frontier-boundary=125 --test-model=true"
     }
   }
 }

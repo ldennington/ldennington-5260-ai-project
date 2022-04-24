@@ -2,18 +2,35 @@
 {
     internal class Calculator : ICalculator
     {
+        private IWriter writer;
+
         private double gamma = 0.9; // 0 <= gamma < 1
         private double x_0 = -5; // 0 as starting point
         private double k = 1; // 1 as starting point
         private double L = 1;
         private int C = -2;
 
-        public void CalculateExpectedUtility(Schedule schedule, IList<Country> worldInitialState, IList<Country> worldEndingState, bool isFinal)
+        public Calculator(IWriter writer)
         {
-            if (!ShouldCalculate(schedule, out double predicted) && !isFinal)
+            this.writer = writer;
+        }
+
+        public void CalculateExpectedUtility(Schedule schedule, IList<Country> worldInitialState, IList<Country> worldEndingState, bool isFinal, bool testModel)
+        {
+            double predicted;
+            if (testModel)
             {
-                // there was a predicted low Expected Utility so we don't want to follow this path
-                return;
+                // if we're testing the model, we always calculate predicted and actual EUs for comparison
+                ShouldCalculate(schedule, out predicted);
+            }
+            else
+            {
+                // if we're not testing the model, we use the model's prediction to determine when to calculate EU
+                if (!ShouldCalculate(schedule, out predicted) && !isFinal)
+                {
+                    // there was a predicted low EU so we don't want to follow this path
+                    return;
+                }
             }
 
             Country selfInitialState = worldInitialState.Where(c => c.IsSelf).FirstOrDefault();
@@ -21,6 +38,7 @@
             double discountedReward = CalculateDiscountedReward(schedule, selfInitialState, selfEndingState);
             double probabilityOfAcceptance = CalculateProbabilityOfAcceptance(schedule, worldInitialState, worldEndingState);
             double actionExpectedUtility = Math.Round(probabilityOfAcceptance * discountedReward + (1 - probabilityOfAcceptance) * C, 4);
+            writer.WritePredictedAndActualEUs(predicted, actionExpectedUtility);
 
             // record expected utility
             double expectedUtility = 0.0;
