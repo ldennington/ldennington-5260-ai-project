@@ -13,7 +13,7 @@
             this.calculator = calculator;
         }
 
-        public void GameScheduler(int depthBound, int frontierBoundary)
+        public void GameScheduler(int depthBound, int frontierBoundary, bool testModel)
         {
             // read input
             ReadFiles();
@@ -23,7 +23,7 @@
             {
                 State = Global.InitialState
             };
-            Search(startNode, depthBound, frontierBoundary);
+            Search(startNode, depthBound, frontierBoundary, testModel);
 
             // write results
             writer.WriteSchedules();
@@ -36,7 +36,7 @@
             reader.ReadCountries(Path.Combine(Directory.GetCurrentDirectory(), "InputFiles", "country-input.csv"));
         }
 
-        public void Search(Node startNode, int depthBound, int frontierBoundary)
+        public void Search(Node startNode, int depthBound, int frontierBoundary, bool testModel)
         {
             // C# priority queue defaults to dequeuing lowest scores first
             // override this with a custom comparer to dequeue highest scores first
@@ -53,7 +53,7 @@
                 if (currentNode.Depth >= depthBound)
                 {
                     isFinal = true;
-                    calculator.CalculateExpectedUtility(currentNode.Schedule, startNode.State, currentNode.State, isFinal);
+                    calculator.CalculateExpectedUtility(currentNode.Schedule, startNode.State, currentNode.State, isFinal, testModel);
                     Global.Solutions.Enqueue(new Schedule()
                     {
                         Actions = currentNode.Schedule.Actions,
@@ -63,7 +63,7 @@
                 {
                     foreach (Node successor in GenerateSuccessors(currentNode, startNode))
                     {
-                        calculator.CalculateExpectedUtility(successor.Schedule, startNode.State, successor.State, isFinal);
+                        calculator.CalculateExpectedUtility(successor.Schedule, startNode.State, successor.State, isFinal, testModel);
                         double expectedUtility = successor.Schedule.Actions.Last().ExpectedUtility;
                         UpdateFrontier(frontier, successor, expectedUtility, frontierBoundary);
                     }

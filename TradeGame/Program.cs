@@ -10,6 +10,7 @@ namespace TradeGame
         {
             int depthBound = 3;
             int frontierBoundary = 100;
+            bool testModel = false;
 
             foreach(string arg in args)
             {
@@ -20,6 +21,9 @@ namespace TradeGame
                         break;
                     case string f when f.Contains("--frontier-boundary="):
                         frontierBoundary = int.Parse(Regex.Match(f, @"\d+").Value);
+                        break;
+                    case string t when t.Contains("--test-model="):
+                        testModel = bool.Parse(Regex.Match(t.ToLower(), @"(true|false)").Value);
                         break;
                     default:
                         throw new ArgumentException(arg);
@@ -39,7 +43,7 @@ namespace TradeGame
                 .BuildServiceProvider();
 
             var scheduleGenerator = serviceProvider.GetService<ScheduleGenerator>();
-            scheduleGenerator.GameScheduler(depthBound, frontierBoundary);
+            scheduleGenerator.GameScheduler(depthBound, frontierBoundary, testModel);
         }
     }
 }
