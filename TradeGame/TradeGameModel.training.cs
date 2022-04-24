@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.ML.Data;
-using Microsoft.ML.Trainers.LightGbm;
+using Microsoft.ML.Trainers.FastTree;
 using Microsoft.ML.Trainers;
 using Microsoft.ML;
 
@@ -33,7 +33,8 @@ namespace TradeGame
                                     .Append(mlContext.Transforms.ReplaceMissingValues(@"Amount", @"Amount"))      
                                     .Append(mlContext.Transforms.Text.FeaturizeText(inputColumnName:@"Resource",outputColumnName:@"Resource"))      
                                     .Append(mlContext.Transforms.Concatenate(@"Features", new []{@"Action",@"Transferring",@"Receiving",@"Amount",@"Resource"}))      
-                                    .Append(mlContext.Regression.Trainers.LightGbm(new LightGbmRegressionTrainer.Options(){NumberOfLeaves=4,NumberOfIterations=4,MinimumExampleCountPerLeaf=28,LearningRate=0.999999776672986,LabelColumnName=@"EU",FeatureColumnName=@"Features",ExampleWeightColumnName=null,Booster=new GradientBooster.Options(){SubsampleFraction=0.999999776672986,FeatureFraction=0.99999999,L1Regularization=1.2558571963098E-09,L2Regularization=0.999999776672986},MaximumBinCountPerFeature=944}));
+                                    .Append(mlContext.Transforms.NormalizeMinMax(@"Features", @"Features"))      
+                                    .Append(mlContext.Regression.Trainers.FastTreeTweedie(new FastTreeTweedieTrainer.Options(){NumberOfLeaves=4,MinimumExampleCountPerLeaf=102,NumberOfTrees=84,MaximumBinCountPerFeature=940,FeatureFraction=0.916713413503691,LearningRate=0.999999776672986,LabelColumnName=@"EU",FeatureColumnName=@"Features"}));
 
             return pipeline;
         }

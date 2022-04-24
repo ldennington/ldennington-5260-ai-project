@@ -156,7 +156,7 @@
                 Node successor = ExecuteTransform(currentNode, self, template);
                 if (successor != null)
                 {
-                    successors.Add(ExecuteTransform(currentNode, self, template));
+                    successors.Add(successor);
                 }
             }
         }
@@ -237,7 +237,13 @@
                 grounded.Execute(successor.State.Where(c => c.IsSelf).FirstOrDefault());
             }
 
-            return successor;
+            // ensure Available Land (our State Quality divisor) never reaches 0
+            if (successor != null && successor.State[0].State["Available Land"] > 0)
+            {
+                return successor;
+            }
+
+            return null;
         }
 
         public Node ExecuteTransfer(Node currentNode, Country transferringCountry, string receivingCountry,
@@ -274,7 +280,7 @@
         {
             if (potentialSuccessorUtility == null)
             {
-                // this node had a predicted poor EU, do not add to frontier
+                // this was a predicted low expected utility, so we will not add it to the frontier
                 return;
             }
 

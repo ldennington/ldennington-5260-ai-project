@@ -10,7 +10,7 @@
 
         public void CalculateExpectedUtility(Schedule schedule, IList<Country> worldInitialState, IList<Country> worldEndingState, bool isFinal)
         {
-            if (!ShouldCalculate(schedule, out double predicted))
+            if (!ShouldCalculate(schedule, out double predicted) && !isFinal)
             {
                 // there was a predicted low Expected Utility so we don't want to follow this path
                 return;
@@ -18,7 +18,6 @@
 
             Country selfInitialState = worldInitialState.Where(c => c.IsSelf).FirstOrDefault();
             Country selfEndingState = worldEndingState.Where(c => c.IsSelf).FirstOrDefault();
-
             double discountedReward = CalculateDiscountedReward(schedule, selfInitialState, selfEndingState);
             double probabilityOfAcceptance = CalculateProbabilityOfAcceptance(schedule, worldInitialState, worldEndingState);
             double actionExpectedUtility = Math.Round(probabilityOfAcceptance * discountedReward + (1 - probabilityOfAcceptance) * C, 4);
@@ -115,7 +114,7 @@
             ecologicalFootprint += (weightedFood + weightedHousing + weightedElectronics + weightedWaste - weightedRecyclables) / weightedAvailableLand;
 
             // Subtract to correctly reward for lower ecological footprints
-            country.StateQuality = Math.Round(100-ecologicalFootprint, 4);
+            country.StateQuality = Math.Round(100 - ecologicalFootprint, 4);
         }
 
         public double WeightResource(Country country, string resource)
