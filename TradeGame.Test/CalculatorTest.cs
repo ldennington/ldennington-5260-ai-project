@@ -20,8 +20,6 @@ namespace TradeGame.Test
         private IList<Country> worldInitialState;
         private IList<Country> worldEndingState;
 
-        Mock<IWriter> writerMock = new Mock<IWriter>();
-
         [TestInitialize]
         public void Initialize()
         {
@@ -190,7 +188,7 @@ namespace TradeGame.Test
                 }
             };
 
-            calculator = new Calculator(writerMock.Object);
+            calculator = new Calculator();
         }
 
         [TestCleanup]
