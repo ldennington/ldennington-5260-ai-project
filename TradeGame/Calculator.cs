@@ -10,30 +10,27 @@
 
         public void CalculateExpectedUtility(Schedule schedule, IList<Country> worldInitialState, IList<Country> worldEndingState, bool isFinal)
         {
+            if (!ShouldCalculate(schedule, out double predicted) && !isFinal)
+            {
+                // there was a predicted low Expected Utility so we don't want to follow this path
+                return;
+            }
+
             Country selfInitialState = worldInitialState.Where(c => c.IsSelf).FirstOrDefault();
             Country selfEndingState = worldEndingState.Where(c => c.IsSelf).FirstOrDefault();
-
             double discountedReward = CalculateDiscountedReward(schedule, selfInitialState, selfEndingState);
             double probabilityOfAcceptance = CalculateProbabilityOfAcceptance(schedule, worldInitialState, worldEndingState);
             double actionExpectedUtility = Math.Round(probabilityOfAcceptance * discountedReward + (1 - probabilityOfAcceptance) * C, 4);
 
-            if (actionExpectedUtility > 0.0 || isFinal)
+            // record expected utility
+            double expectedUtility = 0.0;
+            if (schedule.Actions.Count == 1)
             {
-                // record expected utility
-                double expectedUtility = 0.0;
-                if (schedule.Actions.Count == 1)
-                {
-                    schedule.Actions.Last().ExpectedUtility = actionExpectedUtility;
-                }
-                else
-                {
-                    schedule.Actions.Last().ExpectedUtility = actionExpectedUtility + schedule.Actions[^2].ExpectedUtility;
-                }
+                schedule.Actions.Last().ExpectedUtility = actionExpectedUtility;
             }
             else
             {
-                // there was a negative Expected Utility so we don't want to follow this path
-                schedule.Actions.Last().ExpectedUtility = -1;
+                schedule.Actions.Last().ExpectedUtility = actionExpectedUtility + schedule.Actions[^2].ExpectedUtility;
             }
         }
 
@@ -117,7 +114,7 @@
             ecologicalFootprint += (weightedFood + weightedHousing + weightedElectronics + weightedWaste - weightedRecyclables) / weightedAvailableLand;
 
             // Subtract to correctly reward for lower ecological footprints
-            country.StateQuality = Math.Round(100-ecologicalFootprint, 4);
+            country.StateQuality = Math.Round(100 - ecologicalFootprint, 4);
         }
 
         public double WeightResource(Country country, string resource)
@@ -195,6 +192,66 @@
             }
 
             return participatingCountries;
+        }
+
+        public bool ShouldCalculate(Schedule schedule, out double predicted)
+        {
+            Action action = schedule.Actions.LastOrDefault();
+            bool isTransfer = false;
+
+            if (action.GetType().Name.Equals("TransferTemplate"))
+            {
+                isTransfer = true;
+            }
+
+            TradeGameModel.ModelInput modelInput;
+            if (!isTransfer)
+            {
+                TransformTemplate transform = (TransformTemplate)action;
+                string resource = "";
+                int amount = 0;
+                foreach (string r in transform.Outputs.Keys)
+                {
+                    if (!r.Contains("Population") && !r.Contains("Waste"))
+                    {
+                        resource = r;
+                        amount = transform.Outputs[r];
+                    }
+                }
+
+                modelInput = new TradeGameModel.ModelInput()
+                {
+                    Action = @"Transform",
+                    Resource = @$"{resource}",
+                    Amount = amount,
+                    Transferring = @$"{transform.Country}",
+                    Receiving = @$"{transform.Country}"
+                };
+            }
+            else
+            {
+                TransferTemplate transfer = (TransferTemplate)action;
+
+                modelInput = new TradeGameModel.ModelInput()
+                {
+                    Action = @"Transform",
+                    Resource = @$"{transfer.Resource}",
+                    Amount = transfer.Amount,
+                    Transferring = @$"{transfer.TransferringCountry}",
+                    Receiving = @$"{transfer.ReceivingCountry}"
+                };
+            }
+
+            var result = TradeGameModel.Predict(modelInput);
+
+            if (result.Score > 0.5)
+            {
+                predicted = result.Score;
+                return true;
+            }
+
+            predicted = 0;
+            return false;
         }
     }
 }

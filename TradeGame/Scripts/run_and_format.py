@@ -7,7 +7,7 @@ userProfile = os.environ['USERPROFILE']
 appPath = os.path.join(userProfile, "repos", "Vandy", "AI", "ldennington-5260-ai-project", "TradeGame")
 
 depths = [ 5, 10, 15, 20 ]
-frontierBoundaries = [ 5, 10, 15 ]
+frontierBoundaries = [ 75, 100, 125 ]
 
 for f in frontierBoundaries:
     for d in depths:

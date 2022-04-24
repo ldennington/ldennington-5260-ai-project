@@ -16,6 +16,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.ML" Version="1.7.0" />
+    <PackageReference Include="Microsoft.ML.FastTree" Version="1.7.0" />
     <PackageReference Include="Microsoft.ML.LightGbm" Version="1.7.0" />
     <PackageReference Include="System.IO.Abstractions" Version="16.1.4" />
   </ItemGroup>
