@@ -1,6 +1,6 @@
 ﻿namespace TradeGame
 {
-    internal class Node
+    public class Node
     {
         public Node? Parent { get; set; } = null;
         public int Depth

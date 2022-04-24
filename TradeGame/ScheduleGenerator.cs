@@ -53,10 +53,7 @@
                 if (currentNode.Depth >= depthBound)
                 {
                     isFinal = true;
-                    if (ShouldCalculate(currentNode))
-                    {
-                        calculator.CalculateExpectedUtility(currentNode.Schedule, startNode.State, currentNode.State, isFinal);
-                    }
+                    calculator.CalculateExpectedUtility(currentNode.Schedule, startNode.State, currentNode.State, isFinal);
                     Global.Solutions.Enqueue(new Schedule()
                     {
                         Actions = currentNode.Schedule.Actions,
@@ -66,12 +63,9 @@
                 {
                     foreach (Node successor in GenerateSuccessors(currentNode, startNode))
                     {
-                        if (ShouldCalculate(successor))
-                        {
-                            calculator.CalculateExpectedUtility(successor.Schedule, startNode.State, successor.State, isFinal);
-                            double expectedUtility = successor.Schedule.Actions.Last().ExpectedUtility;
-                            UpdateFrontier(frontier, successor, expectedUtility, frontierBoundary);
-                        }
+                        calculator.CalculateExpectedUtility(successor.Schedule, startNode.State, successor.State, isFinal);
+                        double expectedUtility = successor.Schedule.Actions.Last().ExpectedUtility;
+                        UpdateFrontier(frontier, successor, expectedUtility, frontierBoundary);
                     }
                 }
             }
@@ -276,69 +270,11 @@
             return null;
         }
 
-        public bool ShouldCalculate(Node node)
-        {
-            Action action = node.Schedule.Actions.LastOrDefault();
-            bool isTransfer = false;
-
-            if (action.GetType().Name.Equals("TransferTemplate"))
-            {
-                isTransfer = true;
-            }
-
-            TradeGameModel.ModelInput modelInput;
-            if (!isTransfer)
-            {
-                TransformTemplate transform = (TransformTemplate)action;
-                string resource = "";
-                int amount = 0;
-                foreach (string r in transform.Outputs.Keys)
-                {
-                    if (!r.Contains("Population") && !r.Contains("Waste"))
-                    {
-                        resource = r;
-                        amount = transform.Outputs[r];
-                    }
-                }
-
-                modelInput = new TradeGameModel.ModelInput()
-                {
-                    Action = @"Transform",
-                    Resource = @$"{resource}",
-                    Amount = amount,
-                    Transferring = @$"{transform.Country}",
-                    Receiving = @$"{transform.Country}"
-                };
-            }
-            else
-            {
-                TransferTemplate transfer = (TransferTemplate)action;
-
-                modelInput = new TradeGameModel.ModelInput()
-                {
-                    Action = @"Transform",
-                    Resource = @$"{transfer.Resource}",
-                    Amount = transfer.Amount,
-                    Transferring = @$"{transfer.TransferringCountry}",
-                    Receiving = @$"{transfer.ReceivingCountry}"
-                };
-            }
-
-            var result = TradeGameModel.Predict(modelInput);
-
-            if (result.Score > 0)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
         public void UpdateFrontier(PriorityQueue<Node, double> frontier, Node potentialSuccessor, double potentialSuccessorUtility, int frontierBoundary)
         {
-            if (potentialSuccessorUtility == -1.0)
+            if (potentialSuccessorUtility == null)
             {
-                // This node had a negative EU, reject it
+                // this node had a predicted poor EU, do not add to frontier
                 return;
             }
 

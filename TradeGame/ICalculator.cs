@@ -15,5 +15,7 @@
         double CalculateProbabilityOfAcceptance(Schedule schedule, IList<Country> worldInitialState, IList<Country> worldEndingState);
 
         HashSet<string> GetParticipatingCountries(Schedule schedule);
+
+        bool ShouldCalculate(Schedule schedule, out double predicted);
     }
 }
