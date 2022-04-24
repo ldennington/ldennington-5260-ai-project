@@ -276,6 +276,64 @@
             return null;
         }
 
+        public bool ShouldCalculate(Node node)
+        {
+            Action action = node.Schedule.Actions.LastOrDefault();
+            bool isTransfer = false;
+
+            if (action.GetType().Name.Equals("TransferTemplate"))
+            {
+                isTransfer = true;
+            }
+
+            TradeGameModel.ModelInput modelInput;
+            if (!isTransfer)
+            {
+                TransformTemplate transform = (TransformTemplate)action;
+                string resource = "";
+                int amount = 0;
+                foreach (string r in transform.Outputs.Keys)
+                {
+                    if (!r.Contains("Population") && !r.Contains("Waste"))
+                    {
+                        resource = r;
+                        amount = transform.Outputs[r];
+                    }
+                }
+
+                modelInput = new TradeGameModel.ModelInput()
+                {
+                    Action = @"Transform",
+                    Resource = @$"{resource}",
+                    Amount = amount,
+                    Transferring = @$"{transform.Country}",
+                    Receiving = @$"{transform.Country}"
+                };
+            }
+            else
+            {
+                TransferTemplate transfer = (TransferTemplate)action;
+
+                modelInput = new TradeGameModel.ModelInput()
+                {
+                    Action = @"Transform",
+                    Resource = @$"{transfer.Resource}",
+                    Amount = transfer.Amount,
+                    Transferring = @$"{transfer.TransferringCountry}",
+                    Receiving = @$"{transfer.ReceivingCountry}"
+                };
+            }
+
+            var result = TradeGameModel.Predict(modelInput);
+
+            if (result.Score > 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public void UpdateFrontier(PriorityQueue<Node, double> frontier, Node potentialSuccessor, double potentialSuccessorUtility, int frontierBoundary)
         {
             if (potentialSuccessorUtility == null)
