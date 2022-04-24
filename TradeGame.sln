@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.31903.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeGame", "TradeGame\TradeGame.csproj", "{B456830E-0864-47BD-9608-DE2F3CCAA01F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradeGame.Test", "TradeGame.Test\TradeGame.Test.csproj", "{97F9955D-D4A6-41EE-A9E2-4DBE17A9874F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeGame.Test", "TradeGame.Test\TradeGame.Test.csproj", "{97F9955D-D4A6-41EE-A9E2-4DBE17A9874F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
