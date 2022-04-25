@@ -29,6 +29,7 @@
                 if (!ShouldCalculate(schedule, out predicted) && !isFinal)
                 {
                     // there was a predicted low EU so we don't want to follow this path
+                    schedule.Actions.Last().ShouldKeep = false;
                     return;
                 }
             }

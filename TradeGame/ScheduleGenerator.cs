@@ -278,7 +278,7 @@
 
         public void UpdateFrontier(PriorityQueue<Node, double> frontier, Node potentialSuccessor, double potentialSuccessorUtility, int frontierBoundary)
         {
-            if (potentialSuccessorUtility == null)
+            if (!potentialSuccessor.Schedule.Actions.Last().ShouldKeep)
             {
                 // this was a predicted low expected utility, so we will not add it to the frontier
                 return;
