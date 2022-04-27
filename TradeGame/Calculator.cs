@@ -14,18 +14,16 @@
             Country selfEndingState = worldEndingState.Where(c => c.IsSelf).FirstOrDefault();
             double discountedReward = CalculateDiscountedReward(schedule, selfInitialState, selfEndingState);
             double probabilityOfAcceptance = CalculateProbabilityOfAcceptance(schedule, worldInitialState, worldEndingState);
-            double actionExpectedUtility = Math.Round(probabilityOfAcceptance * discountedReward + (1 - probabilityOfAcceptance) * C, 4);
+            double expectedUtility = Math.Round(probabilityOfAcceptance * discountedReward + (1 - probabilityOfAcceptance) * C, 4);
 
             // record expected utility
-            double expectedUtility = 0.0;
-            if (schedule.Actions.Count == 1)
+            if (schedule.Actions.Count != 1)
             {
-                schedule.Actions.Last().ExpectedUtility = Math.Round(actionExpectedUtility, 4);
+                double parentExpectedUtility = schedule.Actions[^2].ExpectedUtility;
+                expectedUtility += parentExpectedUtility;
             }
-            else
-            {
-                schedule.Actions.Last().ExpectedUtility = Math.Round(actionExpectedUtility + schedule.Actions[^2].ExpectedUtility, 4);
-            }
+
+            schedule.Actions.Last().ExpectedUtility = Math.Round(expectedUtility, 4);
         }
 
         /* State Quality Measure

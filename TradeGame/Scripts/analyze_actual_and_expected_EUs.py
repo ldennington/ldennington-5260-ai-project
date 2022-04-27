@@ -1,6 +1,7 @@
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
+import sys
 
 tempDirectory = os.environ['TEMP']
 
@@ -13,7 +14,7 @@ font = {'fontname':'Segoe UI'}
 plt.xlabel('Order', **font)
 plt.ylabel('Expected Utility', **font)
 
-plt.title(f'Predicted and Actual Expected Utilities for Test Set', **font)
+plt.title(f'Predicted and Actual Expected Utilities for Test Set\nDepth: {sys.argv[1]} Frontier Boundary: {sys.argv[2]}', **font)
 x = df.index.values.tolist()
 
 plt.plot(x, predicted, label = 'predicted', c = '#A2E8A2')

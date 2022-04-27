@@ -4,18 +4,17 @@ import matplotlib.pyplot as plt
 
 userProfile = os.environ['USERPROFILE']
 directoryPath = os.path.join(userProfile, 'OneDrive - Vanderbilt', '5260', 'Programming Project', 'Part 2', 'Data')
-frontierSizes = [ 75, 100, 125 ]
+frontierSizesAndDepths = [ 75, 100, 125, 5, 10, 15, 20 ]
 
-for f in frontierSizes:
-    before = open(os.path.join(directoryPath, f'output-schedules-before-frontier-{f}.json'))
-    after = open(os.path.join(directoryPath, f'output-schedules-after-frontier-{f}.json'))
+for n in frontierSizesAndDepths:
+    before = open(os.path.join(directoryPath, f'output-schedules-before-{n}.json'))
+    after = open(os.path.join(directoryPath, f'output-schedules-after-{n}.json'))
 
     beforeSchedules = json.load(before)
     afterSchedules = json.load(after)
 
     beforeExpectedUtilitiesAndOrder = {}
     afterExpectedUtilitiesAndOrder = {}
-
 
     i = 0
     for eu in beforeSchedules:
@@ -34,7 +33,11 @@ for f in frontierSizes:
     plt.xlabel('Order', **font)
     plt.ylabel('Expected Utility', **font)
 
-    plt.title(f'Expected Utilities Before and After Model Implementation', **font)
+    if (n > 20):
+        plt.title(f'Expected Utilities Before and After Model Implementation\nDepth: 5 Frontier Boundary: {n}', **font)
+    else:
+        plt.title(f'Expected Utilities Before and After Model Implementation\nDepth: {n} Frontier Boundary: 100', **font)
+
     x1 = beforeExpectedUtilitiesAndOrder.values()
     y1 = beforeExpectedUtilitiesAndOrder.keys()
 
