@@ -185,10 +185,10 @@
 
         public Node ExecuteTransferSequenceStepTwo(IList<TransformTemplate> potentialTransforms, Node currentNode, Country self)
         {
-            foreach(TransformTemplate potentialTransform in potentialTransforms)
+            foreach (TransformTemplate potentialTransform in potentialTransforms)
             {
                 bool enoughResourcesForTransfer = true;
-                foreach(string resource in potentialTransform.Inputs.Keys)
+                foreach (string resource in potentialTransform.Inputs.Keys)
                 {
                     if (self.State.ContainsKey(resource))
                     {

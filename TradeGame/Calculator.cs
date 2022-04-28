@@ -44,11 +44,11 @@
             double expectedUtility = 0.0;
             if (schedule.Actions.Count == 1)
             {
-                schedule.Actions.Last().ExpectedUtility = actionExpectedUtility;
+                schedule.Actions.Last().ExpectedUtility = Math.Round(actionExpectedUtility, 4);
             }
             else
             {
-                schedule.Actions.Last().ExpectedUtility = actionExpectedUtility + schedule.Actions[^2].ExpectedUtility;
+                schedule.Actions.Last().ExpectedUtility = Math.Round(actionExpectedUtility + schedule.Actions[^2].ExpectedUtility, 4);
             }
         }
 
