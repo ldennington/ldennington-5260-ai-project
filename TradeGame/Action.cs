@@ -13,6 +13,9 @@ namespace TradeGame
         public string? Type { get; set; }
         [JsonPropertyName("Expected Utility")]
         public double ExpectedUtility { get; set; }
+
+        [JsonIgnore]
+        public bool ShouldKeep { get; set; } = true;
     }
 
     // System.Text.Json cannot serialize/deserialize abstract classes.

@@ -185,10 +185,10 @@
 
         public Node ExecuteTransferSequenceStepTwo(IList<TransformTemplate> potentialTransforms, Node currentNode, Country self)
         {
-            foreach(TransformTemplate potentialTransform in potentialTransforms)
+            foreach (TransformTemplate potentialTransform in potentialTransforms)
             {
                 bool enoughResourcesForTransfer = true;
-                foreach(string resource in potentialTransform.Inputs.Keys)
+                foreach (string resource in potentialTransform.Inputs.Keys)
                 {
                     if (self.State.ContainsKey(resource))
                     {
@@ -278,7 +278,7 @@
 
         public void UpdateFrontier(PriorityQueue<Node, double> frontier, Node potentialSuccessor, double potentialSuccessorUtility, int frontierBoundary)
         {
-            if (potentialSuccessorUtility == null)
+            if (!potentialSuccessor.Schedule.Actions.Last().ShouldKeep)
             {
                 // this was a predicted low expected utility, so we will not add it to the frontier
                 return;

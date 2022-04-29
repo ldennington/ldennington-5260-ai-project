@@ -29,6 +29,7 @@
                 if (!ShouldCalculate(schedule, out predicted) && !isFinal)
                 {
                     // there was a predicted low EU so we don't want to follow this path
+                    schedule.Actions.Last().ShouldKeep = false;
                     return;
                 }
             }
@@ -37,19 +38,16 @@
             Country selfEndingState = worldEndingState.Where(c => c.IsSelf).FirstOrDefault();
             double discountedReward = CalculateDiscountedReward(schedule, selfInitialState, selfEndingState);
             double probabilityOfAcceptance = CalculateProbabilityOfAcceptance(schedule, worldInitialState, worldEndingState);
-            double actionExpectedUtility = Math.Round(probabilityOfAcceptance * discountedReward + (1 - probabilityOfAcceptance) * C, 4);
-            writer.WritePredictedAndActualEUs(predicted, actionExpectedUtility);
+            double expectedUtility = Math.Round(probabilityOfAcceptance * discountedReward + (1 - probabilityOfAcceptance) * C, 4);
+            writer.WritePredictedAndActualEUs(predicted, expectedUtility);
 
             // record expected utility
-            double expectedUtility = 0.0;
-            if (schedule.Actions.Count == 1)
+            if (schedule.Actions.Count != 1)
             {
-                schedule.Actions.Last().ExpectedUtility = actionExpectedUtility;
+                expectedUtility += schedule.Actions[^2].ExpectedUtility;
             }
-            else
-            {
-                schedule.Actions.Last().ExpectedUtility = actionExpectedUtility + schedule.Actions[^2].ExpectedUtility;
-            }
+
+            schedule.Actions.Last().ExpectedUtility = Math.Round(expectedUtility, 4);
         }
 
         /* State Quality Measure
